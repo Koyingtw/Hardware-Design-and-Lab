@@ -7,16 +7,16 @@ output [4-1:0] f;
 
 wire [4-1:0] f1, f2;
 
-Mux_2x1_4bit m1(a, b, sel[0], f1);
-Mux_2x1_4bit m2(c, d, sel[0], f2);
-Mux_2x1_4bit m3(f1, f2, sel[1], f);
+Mux_2x1_4bit m1(a, b, f1, sel[0]);
+Mux_2x1_4bit m2(c, d, f2, sel[0]);
+Mux_2x1_4bit m3(f1, f2, f, sel[1]);
 
 endmodule
 
-module Mux_2x1_4bit(a, b, sel, f);
+module Mux_2x1_4bit(a, b, f, sel);
 input [4-1:0] a, b;
-input sel;
 output [4-1:0] f;
+input sel;
 
 wire [4-1:0] aa, bb;
 
