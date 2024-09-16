@@ -10,6 +10,7 @@ Dmux_1x4_4bit Dmux1(.in(in), .a(a), .b(b), .c(c), .d(d), .sel(sel));
 
 initial begin
     repeat (2**3) begin
+        $display("sel = %d, output = %d %d %d %d", sel, a, b, c, d);
         #1 in = in + 4'b1;
         sel = sel + 2'b1;
     end

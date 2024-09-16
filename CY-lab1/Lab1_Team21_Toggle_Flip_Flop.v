@@ -22,12 +22,11 @@ module XOR(out, a, b);
 input a, b;
 output out;
 
-// wire _a, _b, a_b, _ab;
-// not n1(_a, a);
-// not n2(_b, b);
-// and a1(a_b, a, _b);
-// and a2(_ab, _a, b);
-// or o1(out, a_b, _a_b);
-assign out = a ^ b;
+wire _a, _b, a_b, _ab;
+not n1(_a, a);
+not n2(_b, b);
+and a1(a_b, a, _b);
+and a2(_ab, _a, b);
+or o1(out, a_b, _ab);
 
 endmodule

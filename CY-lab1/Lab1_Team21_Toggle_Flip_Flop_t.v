@@ -18,13 +18,19 @@ end
 // and a1(xx, x, 0);
 // $display("X and 0", xx);
 
-initial begin;
-    #3
+always begin
+    #3 t = ~t;
+end
+
+initial begin
     repeat (4**2) begin
-        #3 state = state + 2'b1;
-        t = state[0];
-        rst_n = state[1];
+        #5 rst_n = ~rst_n;
     end
     #3 $finish;
+end
+
+initial begin
+    @(posedge clk); $display("state = %d, q = %d", state, q);
+
 end
 endmodule
