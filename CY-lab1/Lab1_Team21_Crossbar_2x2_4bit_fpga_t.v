@@ -11,7 +11,7 @@ Crossbar_2x2_4bit_fpga Crossbar(in1, in2, control, out1, out2, out11, out22);
 
 initial begin
     repeat (2 ** 3) begin
-        $display("control = %d, output = %d %d %d %d", control, out1, out2, out11, out22);
+        #1 $display("control = %d, output = %d %d %d %d", control, out1, out2, out11, out22);
         #1 control = ~control;
         in1 = in1 + 4'b1;
         in2 = in2 + 4'b1;

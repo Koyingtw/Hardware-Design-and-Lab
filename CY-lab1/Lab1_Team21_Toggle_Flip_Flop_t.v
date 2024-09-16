@@ -4,10 +4,9 @@ module Toggle_Flip_Flop_t;
 reg clk = 1'b0;
 reg t = 1'b0;
 reg rst_n = 1'b0;
-reg [1:0] state = 2'b00;
+wire q;
 
 Toggle_Flip_Flop TFF(clk, q, t, rst_n);
-wire q;
 
 always begin
     #2 clk = ~clk;
@@ -29,8 +28,7 @@ initial begin
     #3 $finish;
 end
 
-initial begin
-    @(posedge clk); $display("state = %d, q = %d", state, q);
-
+always @(posedge clk) begin
+    #0.5 $display("t = %d, rst_n = %d, q = %d", t, rst_n, q);
 end
 endmodule

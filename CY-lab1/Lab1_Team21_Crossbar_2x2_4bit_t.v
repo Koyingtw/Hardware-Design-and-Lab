@@ -7,11 +7,11 @@ reg [4-1:0] in2 = 4'b0010;
 reg control = 1'b0;
 wire [4-1:0] out1, out2;
 
-Crossbar_2x2_4bit Crossbar_2x2_4bit(in1, in2, control, out1, out2);
+Crossbar_2x2_4bit Crossbar(in1, in2, control, out1, out2);
 
 initial begin
     repeat (2 ** 3) begin
-        $display("control = %d, output = %d %d", control, out1, out2);
+        #1 $display("control = %d, output = %d %d", control, out1, out2);
         #1 control = ~control;
         in1 = in1 + 4'b1;
         in2 = in2 + 4'b1;
