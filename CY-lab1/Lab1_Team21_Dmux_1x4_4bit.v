@@ -14,20 +14,20 @@ endmodule
 
 module Dmux_1x2_4bit(in, a, b, sel);
 input [4-1:0] in;
-input [1-1:0] sel;
+input sel;
 output [4-1:0] a, b;
 wire _sel;
-not not1(_sel, sel[0]);
+not not1(_sel, sel);
 
-and and1(a[0], in[0], _sel[0]);
-and and2(a[1], in[1], _sel[0]);
-and and3(a[2], in[2], _sel[0]);
-and and4(a[3], in[3], _sel[0]);
+and and1(a[0], in[0], _sel);
+and and2(a[1], in[1], _sel);
+and and3(a[2], in[2], _sel);
+and and4(a[3], in[3], _sel);
 
-and and5(b[0], in[0], sel[0]);
-and and6(b[1], in[1], sel[0]);
-and and7(b[2], in[2], sel[0]);
-and and8(b[3], in[3], sel[0]);
+and and5(b[0], in[0], sel);
+and and6(b[1], in[1], sel);
+and and7(b[2], in[2], sel);
+and and8(b[3], in[3], sel);
 
 
 endmodule
