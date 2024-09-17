@@ -19,11 +19,13 @@ output [4-1:0] f;
 input sel;
 
 wire [4-1:0] aa, bb;
+wire _sel;
+not(_sel, sel);
 
-and g1(aa[0], a[0], ~sel);
-and g2(aa[1], a[1], ~sel);
-and g3(aa[2], a[2], ~sel);
-and g4(aa[3], a[3], ~sel);
+and g1(aa[0], a[0], _sel);
+and g2(aa[1], a[1], _sel);
+and g3(aa[2], a[2], _sel);
+and g4(aa[3], a[3], _sel);
 
 and g5(bb[0], b[0], sel);
 and g6(bb[1], b[1], sel);
