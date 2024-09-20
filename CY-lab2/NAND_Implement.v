@@ -15,7 +15,7 @@ NOT notsel2(_sel[1], sel[1]);
 NOT notsel3(_sel[2], sel[2]);
 
 
-nand nand1(nandout, a, b);
+NAND nand1(nandout, a, b);
 AND and1(andout, a, b);
 OR or1(orout, a, b);
 NOR nor1(norout, a, b);
@@ -60,11 +60,11 @@ OR or8(out, tmp1, tmp2);
 
 endmodule
 
-module NAND(out, a, b);
-    input a, b;
-    output out;
-    nand nand1(out, a, b);
-endmodule
+// module NAND(out, a, b);
+//     input a, b;
+//     output out;
+//     nand nand1(out, a, b);
+// endmodule
 
 module AND(out, a, b);
 input a, b;
@@ -82,18 +82,12 @@ output out;
 
 wire a1, a2;
 wire b1, b2;
-// nand nand1(out, a, a);
-// nand nand4(a1, a, 1'b1);
-// nand nand5(a2, a1, 1'b1);
-// nand nand6(b1, b, 1'b1);
-// nand nand7(b2, b1, 1'b1);
-
 
 
 wire nandout1, nandout2;
-nand nand1(nandout1, a, a);
-nand nand2(nandout2, b, b);
-nand nand3(out, nandout1, nandout2);
+NAND nand1(nandout1, a, a);
+NAND nand2(nandout2, b, b);
+NAND nand3(out, nandout1, nandout2);
 
 endmodule
 
