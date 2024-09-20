@@ -11,45 +11,54 @@ ADD add1(add, rs, rt);
 BITOR bitor1(bitor, rs, rt);
 BITAND bitand1(bitand, rs, rt);
 RSHIFT rshift1(rshift, rt);
-LSHIFT lshift1(lshift, rt);
-LT lt1(lt, rs, rt);
-EQ eq1(eq, rs, rt);
+LSHIFT lshift1(lshift, rs);
+CLT lt1(lt, rs, rt);
+CEQ eq1(eq, rs, rt);
+// assign sub = 4'b0000;
+// assign add = 4'b0001;
+// assign bitor = 4'b0010;
+// assign bitand = 4'b0011;
+// assign rshift = 4'b0100;
+// assign lshift = 4'b0101;
+// assign lt = 4'b0110;
+// assign eq = 4'b0111;
+
 
 wire [3-1:0] _sel;
 NOT3b notsel(_sel, sel);
 
-wire [8-1:0][4-1:0] choose;
-AND4x1 and1(choose[0], sub, _sel[0]);
-AND4x1 and2(choose[1], add, sel[0]);
-AND4x1 and3(choose[2], bitor, _sel[0]);
-AND4x1 and4(choose[3], bitand, sel[0]);
-AND4x1 and5(choose[4], rshift, _sel[0]);
-AND4x1 and6(choose[5], lshift, sel[0]);
-AND4x1 and7(choose[6], lt, _sel[0]);
-AND4x1 and8(choose[7], eq, sel[0]);
+wire [4-1:0] choose0, choose1, choose2, choose3, choose4, choose5, choose6, choose7;
+AND4x1 and1(choose0, sub, _sel[0]);
+AND4x1 and2(choose1, add, sel[0]);
+AND4x1 and3(choose2, bitor, _sel[0]);
+AND4x1 and4(choose3, bitand, sel[0]);
+AND4x1 and5(choose4, rshift, _sel[0]);
+AND4x1 and6(choose5, lshift, sel[0]);
+AND4x1 and7(choose6, lt, _sel[0]);
+AND4x1 and8(choose7, eq, sel[0]);
 
-wire [4-1:0][4-1:0] stage2;
+wire [4-1:0] stage20, stage21, stage22, stage23;
 
-BITOR bor1(stage2[0], choose[0], choose[1]);
-BITOR bor2(stage2[1], choose[2], choose[3]);
-BITOR bor3(stage2[2], choose[4], choose[5]);
-BITOR bor4(stage2[3], choose[6], choose[7]);
+BITOR bor1(stage20, choose0, choose1);
+BITOR bor2(stage21, choose2, choose3);
+BITOR bor3(stage22, choose4, choose5);
+BITOR bor4(stage23, choose6, choose7);
 
-wire [4-1:0][4-1:0] choose2;
-AND4x1 and9(choose2[0], stage2[0], _sel[1]);
-AND4x1 and10(choose[1], stage2[0], sel[1]);
-AND4x1 and11(choose2[2], stage2[1], _sel[1]);
-AND4x1 and12(choose[3], stage2[1], sel[1]);
+wire [4-1:0] choose20, choose21, choose22, choose23;
+AND4x1 and9(choose20, stage20, _sel[1]);
+AND4x1 and10(choose21, stage21, sel[1]);
+AND4x1 and11(choose22, stage22, _sel[1]);
+AND4x1 and12(choose23, stage23, sel[1]);
 
-wire [2-1:0][4-1:0] stage3;
-BITOR bor5(stage3[0], choose2[0], choose2[1]);
-BITOR bor6(stage3[1], choose2[2], choose2[3]);
+wire [4-1:0] stage30, stage31;
+BITOR bor5(stage30, choose20, choose21);
+BITOR bor6(stage31, choose22, choose23);
 
-wire [2-1:0][4-1:0] choose3;
-AND4x1 and13(choose3[0], stage3[0], _sel[2]);
-AND4x1 and14(choose3[1], stage3[0], sel[2]);
+wire [4-1:0] choose30, choose31;
+AND4x1 and13(choose30, stage30, _sel[2]);
+AND4x1 and14(choose31, stage31, sel[2]);
 
-BITOR bor7(rd, choose3[0], choose3[1]);
+BITOR bor7(rd, choose30, choose31);
 
 
 endmodule
@@ -59,15 +68,15 @@ input [4-1:0] a, b;
 output [4-1:0] out;
 
 wire SUB, gnd;
-wire [4-1:0] neg_rt;
-NOT not1(neg_rt[0], rt[0]);
-NOT not2(neg_rt[1], rt[1]);
-NOT not3(neg_rt[2], rt[2]);
-NOT not4(neg_rt[3], rt[3]);
+wire [4-1:0] neg_b;
+NOT not1(neg_b[0], b[0]);
+NOT not2(neg_b[1], b[1]);
+NOT not3(neg_b[2], b[2]);
+NOT not4(neg_b[3], b[3]);
 
-Full_Adder fasub(
-    .a(rs),
-    .b(neg_rt),
+Ripple_Carry_Adder_4bit RCAsub(
+    .a(a),
+    .b(neg_b),
     .cin(1'b1),
     .cout(gnd),
     .sum(out)
@@ -79,12 +88,12 @@ input [4-1:0] a, b;
 output [4-1:0] out;
 wire gnd;
 
-Full_Adder fa(
+Ripple_Carry_Adder_4bit RCA(
     .a(a),
     .b(b),
     .cin(1'b0),
     .cout(gnd),
-    .sum(out[3:0])
+    .sum(out)
 );
 endmodule
 
@@ -115,20 +124,20 @@ output [4-1:0] out;
 AND and1(out[0], a[1], 1'b1);
 AND and2(out[1], a[2], 1'b1);
 AND and3(out[2], a[3], 1'b1);
-AND and4(out[3], 1'b0, 1'b1);
+AND and4(out[3], a[0], 1'b1);
 endmodule
 
 module LSHIFT(out, a);
 input [4-1:0] a;
 output [4-1:0] out;
 
-AND and1(out[0], 1'b0, 1'b1);
+AND and1(out[0], a[3], 1'b1);
 AND and2(out[1], a[0], 1'b1);
 AND and3(out[2], a[1], 1'b1);
 AND and4(out[3], a[2], 1'b1);
 endmodule
 
-module LT(out, a, b);
+module CLT(out, a, b);
 input [4-1:0] a, b;
 output [4-1:0] out;
 
@@ -183,7 +192,7 @@ OR or3(out[0], LT0_LT1_LT2_LT3, res[2]);
 
 endmodule
 
-module EQ(out, a, b);
+module CEQ(out, a, b);
 input [4-1:0] a, b;
 output [4-1:0] out;
 
@@ -237,9 +246,9 @@ AND and3(out[2], a[2], b);
 AND and4(out[3], a[3], b);
 endmodule
 
-module NOT3(out, a);
-input [4-1:0] a;
-output [4-1:0] out;
+module NOT3b(out, a);
+input [3-1:0] a;
+output [3-1:0] out;
 
 NOT not1(out[0], a[0]);
 NOT not2(out[1], a[1]);
