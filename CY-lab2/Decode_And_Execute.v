@@ -156,38 +156,38 @@ NOT not6(_b[1], b[1]);
 NOT not7(_b[2], b[2]);
 NOT not8(_b[3], b[3]);
 
+wire [4-1:0] EQ, preEQ;
+
+BITEQ eq1(EQ, a, b);
+
+AND andpreEQ0(preEQ[3], EQ[3], 1'b1);
+AND andpreEQ1(preEQ[2], EQ[2], EQ[3]);
+AND andpreEQ2(preEQ[1], EQ[1], preEQ[2]);
+AND andpreEQ3(preEQ[0], EQ[0], preEQ[1]);
+
 wire [4-1:0] LT;
 AND and4(LT[0], _a[0], b[0]);
 AND and5(LT[1], _a[1], b[1]);
 AND and6(LT[2], _a[2], b[2]);
 AND and7(LT[3], _a[3], b[3]);
 
-// LT[3] or (LT[2] and _LT[3]) or (LT[1] and _LT[2] and _LT[3]) 
-// or (LT[0] and _LT[1] and _LT[2] and _LT[3])
-
-wire [4-1:0] _LT;
-NOT not9(_LT[0], LT[0]);
-NOT not10(_LT[1], LT[1]);
-NOT not11(_LT[2], LT[2]);
-NOT not12(_LT[3], LT[3]);
+// LT[3] or (LT[2] and preEQ[3]) or (LT[1] and preEQ[2]) 
+// or (LT[0] and preEQ[1])
 
 wire [4-1:0] res;
 AND and8(res[0], LT[3], 1'b1);
 
-wire LT2_LT3;
-AND and9(LT2_LT3, LT[2], _LT[3]);
-OR or1(res[1], LT2_LT3, res[0]);
+wire LT2EQ3;
+AND and9(LT2EQ3, LT[2], EQ[3]);
+OR or1(res[1], LT2EQ3, res[0]);
 
-wire LT1_LT2, LT1_LT2_LT3;
-AND and10(LT1_LT2, LT[1], _LT[2]);
-AND and11(LT1_LT2_LT3, LT1_LT2, _LT[3]);
-OR or2(res[2], LT1_LT2_LT3, res[1]);
+wire LT1preEQ2;
+AND and10(LT1preEQ2, LT[1], preEQ[2]);
+OR or2(res[2], LT1preEQ2, res[1]);
 
-wire LT0_LT1, LT0_LT1_LT2, LT0_LT1_LT2_LT3;
-AND and12(LT0_LT1, LT[0], _LT[1]);
-AND and13(LT0_LT1_LT2, LT0_LT1, _LT[2]);
-AND and14(LT0_LT1_LT2_LT3, LT0_LT1_LT2, _LT[3]);
-OR or3(out[0], LT0_LT1_LT2_LT3, res[2]);
+wire LT0preEQ1;
+AND and12(LT0preEQ1, LT[0], preEQ[1]);
+OR or3(out[0], LT0preEQ1, res[2]);
 
 
 endmodule
@@ -200,8 +200,23 @@ AND and1(out[3], 1'b1, 1'b1);
 AND and2(out[2], 1'b1, 1'b1);
 AND and3(out[1], 1'b1, 1'b1);
 
-wire EQ [3:0];
-wire [4-1:0] _a, _b;
+wire [4-1:0] EQ;
+
+BITEQ eq1(EQ, a, b);
+
+wire res[2:0];
+AND and4(res[0], EQ[0], EQ[1]);
+AND and5(res[1], EQ[2], res[0]);
+AND and6(out[0], EQ[3], res[1]);
+
+endmodule
+
+module BITEQ(out, a, b);
+input [4-1:0] a, b;
+output [4-1:0] out;
+
+wire [4-1:0] AB, _A_B, _a, _b;
+
 NOT not1(_a[0], a[0]);
 NOT not2(_a[1], a[1]);
 NOT not3(_a[2], a[2]);
@@ -212,27 +227,20 @@ NOT not6(_b[1], b[1]);
 NOT not7(_b[2], b[2]);
 NOT not8(_b[3], b[3]);
 
-wire [4-1:0] ab, _a_b;
-AND and4(ab[0], a[0], b[0]);
-AND and5(ab[1], a[1], b[1]);
-AND and6(ab[2], a[2], b[2]);
-AND and7(ab[3], a[3], b[3]);
+AND and1(AB[0], a[0], b[0]);
+AND and2(AB[1], a[1], b[1]);
+AND and3(AB[2], a[2], b[2]);
+AND and4(AB[3], a[3], b[3]);
 
-AND and8(_a_b[0], _a[0], _b[0]);
-AND and9(_a_b[1], _a[1], _b[1]);
-AND and10(_a_b[2], _a[2], _b[2]);
-AND and11(_a_b[3], _a[3], _b[3]);
+AND and5(_A_B[0], _a[0], _b[0]);
+AND and6(_A_B[1], _a[1], _b[1]);
+AND and7(_A_B[2], _a[2], _b[2]);
+AND and8(_A_B[3], _a[3], _b[3]);
 
-AND and12(EQ[0], ab[0], _a_b[0]);
-AND and13(EQ[1], ab[1], _a_b[1]);
-AND and14(EQ[2], ab[2], _a_b[2]);
-AND and15(EQ[3], ab[3], _a_b[3]);
-
-wire res[2:0];
-OR or1(res[0], EQ[0], EQ[1]);
-OR or2(res[1], res[0], EQ[2]);
-OR or3(out[0], res[1], EQ[3]);
-
+OR or1(out[0], AB[0], _A_B[0]);
+OR or2(out[1], AB[1], _A_B[1]);
+OR or3(out[2], AB[2], _A_B[2]);
+OR or4(out[3], AB[3], _A_B[3]);
 endmodule
 
 module AND4x1(out, a, b);

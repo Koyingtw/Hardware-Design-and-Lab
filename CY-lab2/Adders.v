@@ -17,8 +17,5 @@ module Full_Adder (a, b, cin, cout, sum);
     XOR xor1(sum1, a, b);
     XOR xor2(sum, sum1, cin);
     Majority maj1(a, b, cin, cout);
-
-
-
 endmodule
 
