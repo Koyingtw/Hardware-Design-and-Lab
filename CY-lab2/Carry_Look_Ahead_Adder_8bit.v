@@ -1,10 +1,10 @@
 `timescale 1ns/1ps
 
-module Carry_Look_Ahead_Adder_8bit(a, b, cin, s, cout);
+module Carry_Look_Ahead_Adder_8bit(a, b, c0, s, c8);
 input [8-1:0] a, b;
-input cin;
+input c0;
 output[8-1:0] s;
-output cout;
+output c8;
 
 wire [3-1:0] c13, c57;
 wire [8-1:0] c;
@@ -51,13 +51,13 @@ PGGenerator_4bit PG2(
 
 
 Carry_Look_Ahead_Adder_2bit CLA1(
-    .c0(cin),
+    .c0(c0),
     .g1(g1),
     .p1(p1),
     .g2(g2),
     .p2(p2),
     .c4(c4),
-    .c8(cout)
+    .c8(c8)
 );
 
 
@@ -65,7 +65,7 @@ Carry_Look_Ahead_Adder_2bit CLA1(
 Carry_Look_Ahead_Generator_4bit RCA1(
     .p(p1),
     .g(g1),
-    .cin(cin),
+    .cin(c0),
     .c(c13)
 );
 
@@ -77,16 +77,7 @@ Carry_Look_Ahead_Generator_4bit RCA2(
 );
 
 
-
-// debug
-
-// assign s[0] = a[1];
-// cal s
-// assign s[4] = 1'b0;
-// assign s[5] = 1'b0;
-// assign s[6] = 1'b0;
-// assign s[7] = 1'b0;
-ADDER ADD1(a[0], b[0], cin, s[0]);
+ADDER ADD1(a[0], b[0], c0, s[0]);
 ADDER ADD2(a[1], b[1], c13[0], s[1]);
 ADDER ADD3(a[2], b[2], c13[1], s[2]);
 ADDER ADD4(a[3], b[3], c13[2], s[3]);
@@ -205,3 +196,73 @@ wire tmp;
 XOR xor1(tmp, a, b);
 XOR xor2(s, tmp, cin);
 endmodule
+
+module NAND(out, a, b);
+    input a, b;
+    output out;
+    nand nand1(out, a, b);
+endmodule
+
+module AND(out, a, b);
+input a, b;
+output out;
+wire nand_out1, nand_out2;
+
+NAND nand1(nand_out1, a, b);
+NAND nand2(nand_out2, a, b);
+NAND nand3(out, nand_out1, nand_out2);
+endmodule
+
+module OR(out, a, b);
+input a, b;
+output out;
+
+wire a1, a2;
+wire b1, b2;
+
+
+wire nandout1, nandout2;
+NAND nand1(nandout1, a, a);
+NAND nand2(nandout2, b, b);
+NAND nand3(out, nandout1, nandout2);
+
+endmodule
+
+module NOT(out, a);
+input a;
+output out;
+
+NAND nand1(out, a, a);
+endmodule
+
+module NOR(out, a, b);
+input a, b;
+output out;
+
+wire orout;
+OR or1(orout, a, b);
+NOT not1(out, orout);
+
+endmodule
+
+module XOR(out, a, b); // a_b or _ab
+input a, b;
+output out;
+
+wire _a, _b, a_b, _ab;
+NOT not1(_a, a);
+NOT not2(_b, b);
+AND and1(a_b, a, _b);
+AND and2(_ab, _a, b);
+OR or1(out, a_b, _ab);
+endmodule
+
+module XNOR(out, a, b); 
+input a, b;
+output out;
+
+wire xorout;
+XOR xor1(xorout, a, b);
+NOT not1(out, xorout);
+endmodule
+

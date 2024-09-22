@@ -9,7 +9,7 @@ wire [4-1:0] rd;
 Decode_And_Execute ugate(.rd(rd), .rs(rs), .rt(rt), .sel(sel));
 
 initial begin
-    while (8 * 5) begin
+    repeat (8 * 5) begin
         #1;
         case (sel)
             3'b000: begin

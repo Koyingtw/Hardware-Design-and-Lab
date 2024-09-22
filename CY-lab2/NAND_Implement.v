@@ -60,11 +60,11 @@ OR or8(out, tmp1, tmp2);
 
 endmodule
 
-// module NAND(out, a, b);
-//     input a, b;
-//     output out;
-//     nand nand1(out, a, b);
-// endmodule
+module NAND(out, a, b);
+    input a, b;
+    output out;
+    nand nand1(out, a, b);
+endmodule
 
 module AND(out, a, b);
 input a, b;
@@ -128,3 +128,4 @@ wire xorout;
 XOR xor1(xorout, a, b);
 NOT not1(out, xorout);
 endmodule
+

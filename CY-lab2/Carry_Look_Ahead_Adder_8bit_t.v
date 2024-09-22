@@ -10,12 +10,14 @@ wire c8;
 Carry_Look_Ahead_Adder_8bit CLA(
     .a(a), 
     .b(b), 
-    .cin(c0), 
+    .c0(c0), 
     .s(s),
-    .cout(c8)
+    .c8(c8)
 );
 
 initial begin
+    $dumpfile("CLA.vcd");
+    $dumpvars(0, Carry_Look_Ahead_Adder_8bit_t);
     c0 = 1'b0;
     a = 8'b00000000;
     b = 8'b00000000;

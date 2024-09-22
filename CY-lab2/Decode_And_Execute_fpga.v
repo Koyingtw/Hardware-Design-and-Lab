@@ -1,5 +1,132 @@
 `timescale 1ns/1ps
 
+module Display_Control(rs, rt, sel, seg, an);
+input [4-1:0] rs, rt;
+input [3-1:0] sel;
+output [7-1:0] seg;
+output [4-1:0] an;
+wire [4-1:0] rd, _rd;
+wire [16-1:0] num, _num;
+
+and an1(an[0], 1'b0, 1'b0);
+and an2(an[1], 1'b1, 1'b1);
+and an3(an[2], 1'b1, 1'b1);
+and an4(an[3], 1'b1, 1'b1);
+
+Decode_And_Execute de(rs, rt, sel, rd);
+
+not not1(_rd[0], rd[0]);
+not not2(_rd[1], rd[1]);
+not not3(_rd[2], rd[2]);
+not not4(_rd[3], rd[3]);
+
+and and1(num[0], _rd[3], _rd[2], _rd[1], _rd[0]);
+and and2(num[1], _rd[3], _rd[2], _rd[1], rd[0]);
+and and3(num[2], _rd[3], _rd[2], rd[1], _rd[0]);
+and and4(num[3], _rd[3], _rd[2], rd[1], rd[0]);
+and and5(num[4], _rd[3], rd[2], _rd[1], _rd[0]);
+and and6(num[5], _rd[3], rd[2], _rd[1], rd[0]);
+and and7(num[6], _rd[3], rd[2], rd[1], _rd[0]);
+and and8(num[7], _rd[3], rd[2], rd[1], rd[0]);
+and and9(num[8], rd[3], _rd[2], _rd[1], _rd[0]);
+and and10(num[9], rd[3], _rd[2], _rd[1], rd[0]);
+and and11(num[10], rd[3], _rd[2], rd[1], _rd[0]);
+and and12(num[11], rd[3], _rd[2], rd[1], rd[0]);
+and and13(num[12], rd[3], rd[2], _rd[1], _rd[0]);
+and and14(num[13], rd[3], rd[2], _rd[1], rd[0]);
+and and15(num[14], rd[3], rd[2], rd[1], _rd[0]);
+and and16(num[15], rd[3], rd[2], rd[1], rd[0]);
+
+not not5(_num[0], num[0]);
+not not6(_num[1], num[1]);
+not not7(_num[2], num[2]);
+not not8(_num[3], num[3]);
+not not9(_num[4], num[4]);
+not not10(_num[5], num[5]);
+not not11(_num[6], num[6]);
+not not12(_num[7], num[7]);
+not not13(_num[8], num[8]);
+not not14(_num[9], num[9]);
+not not15(_num[10], num[10]);
+not not16(_num[11], num[11]);
+not not17(_num[12], num[12]);
+not not18(_num[13], num[13]);
+not not19(_num[14], num[14]);
+not not20(_num[15], num[15]);
+
+
+SymbolA SA(num, _num, seg[0]);
+SymbolB SB(num, _num, seg[1]);
+SymbolC SC(num, _num, seg[2]);
+SymbolD SD(num, _num, seg[3]);
+SymbolE SE(num, _num, seg[4]);
+SymbolF SF(num, _num, seg[5]);
+SymbolG SG(num, _num, seg[6]);
+endmodule
+
+module SymbolA(num, _num, out);
+input [16-1:0] num, _num;
+output out;
+
+nor and1(out, num[0], num[2], num[3],
+        num[5], num[6], num[7], num[8], num[9], num[10],
+        num[12] , num[14], num[15]);
+endmodule
+
+module SymbolB(num, _num, out);
+input [16-1:0] num, _num;
+output out;
+
+nor and1(out, num[0], num[1], num[2], num[3], num[4],
+        num[7], num[8], num[9], num[10],
+        num[13]);
+endmodule
+
+module SymbolC(num, _num, out);
+input [16-1:0] num, _num;
+output out;
+
+nor and1(out, num[0], num[1], num[3], num[4],
+        num[5], num[6], num[7], num[8], num[9], num[10],
+        num[11], num[13]);
+endmodule
+
+module SymbolD(num, _num, out);
+input [16-1:0] num, _num;
+output out;
+
+nor and1(out, num[0], num[2], num[3], 
+        num[5], num[6], num[8],
+        num[11], num[12], num[13], num[14]);
+endmodule
+
+module SymbolE(num, _num, out);
+input [16-1:0] num, _num;
+output out;
+
+nor and1(out, num[0], num[2],
+        num[6], num[8], num[10],
+        num[11], num[12], num[13], num[14], num[15]);
+endmodule
+
+module SymbolF(num, _num, out);
+input [16-1:0] num, _num;
+output out;
+
+nor and1(out, num[0], num[4],
+        num[5], num[6], num[8], num[9], num[10],
+        num[11], num[12], num[14], num[15]);
+endmodule
+
+module SymbolG(num, _num, out);
+input [16-1:0] num, _num;
+output out;
+
+nor and1(out, num[2], num[3], num[4],
+        num[5], num[6], num[8], num[9], num[10],
+        num[11], num[13], num[14], num[15]);
+endmodule
+
 module Decode_And_Execute(rs, rt, sel, rd);
 input [4-1:0] rs, rt;
 input [3-1:0] sel;
@@ -14,6 +141,7 @@ RSHIFT rshift1(rshift, rt);
 LSHIFT lshift1(lshift, rs);
 CLT lt1(lt, rs, rt);
 CEQ eq1(eq, rs, rt);
+
 
 wire [3-1:0] _sel;
 NOT3b notsel(_sel, sel);
@@ -254,25 +382,11 @@ NOT not2(out[1], a[1]);
 NOT not3(out[2], a[2]);
 endmodule
 
-module NOT2(out, in);
-input in;
-output out;
-
-Universal_Gate ugate(out, 1'b1, in);
-endmodule
-
 module NAND(out, a, b);
-input a, b;
-output out;
-
-wire _b, uout;
-not not1(_b, b);
-Universal_Gate ugate(uout, a, _b);
-not not2(out, uout);
-// nand nand1(out, a, b);
-
+    input a, b;
+    output out;
+    nand nand1(out, a, b);
 endmodule
-
 
 module AND(out, a, b);
 input a, b;
@@ -350,7 +464,6 @@ Full_Adder fa1(a[1], b[1], C[0], C[1], sum[1]);
 Full_Adder fa2(a[2], b[2], C[1], C[2], sum[2]);
 Full_Adder fa3(a[3], b[3], C[2], cout, sum[3]);
 endmodule
-
 
 module Full_Adder (a, b, cin, cout, sum);
     input a, b, cin;
