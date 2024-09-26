@@ -16,27 +16,26 @@ Carry_Look_Ahead_Adder_8bit CLA(
 );
 
 initial begin
-    $dumpfile("CLA.vcd");
-    $dumpvars(0, Carry_Look_Ahead_Adder_8bit_t);
     c0 = 1'b0;
     a = 8'b00000000;
     b = 8'b00000000;
-    repeat (30) begin
-        #1
-        a = a + 5;
-        b = b + 7;
-        c0 = c0 + 1;
-        #1;
-        $display("%d + %d + %d = %d, c8 = %d", c0, a, b, s, c8);
-        if (s != a + b + c0) begin
-            $display("Error: s != a + b, expeted: %d, got: %d", a + b, s);
+    repeat (2) begin
+        repeat(2**8) begin
+            repeat(2**8) begin
+            #1;
+            $display("a: %b, b: %b, c0: %b, s: %b, c8: %b", a, b, c0, s, c8);
+            if (a + b + c0 != s) begin
+                $display("Error: %b + %b + %b != %b", a, b, c0, s);
+                $finish;
+            end
+            a = a + 1;
+            end
+            b = b + 1;
         end
-        
-        if (c8 != ((a + b + c0) / 256)) begin
-            $display("Error: c8 != a[7] + b[7], expeted: %d, got: %d", a[7] + b[7], c8);
-        end
+        c0 = 1'b1;
     end
-    #1 $finish;
+    #1;
+    $finish;
 end
 endmodule
 

@@ -11,8 +11,6 @@ Multiplier_4bit Multiplier_4bit(
 );
 
 initial begin
-    $dumpfile("Multiplier_4bit.vcd");
-    $dumpvars(0, Multiplier_4bit_t);
     a = 4'b0000;
     b = 4'b0000;
     repeat (2 ** 4) begin

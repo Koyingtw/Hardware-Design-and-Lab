@@ -127,7 +127,6 @@ module Carry_Look_Ahead_Generator_4bit(p, g, cin, c);
     wire P2G1; // also c2comp1
     AND p2g1(P2G1, p[2], g[1]);
     wire c2comp2, P0G0;
-    AND p0g0(P1G0, p[1], g[0]);
     AND p2p1p0(c2comp2, p[2], P1G0);
     wire P2P1;
     AND p2p1(P2P1, p[2], p[1]);

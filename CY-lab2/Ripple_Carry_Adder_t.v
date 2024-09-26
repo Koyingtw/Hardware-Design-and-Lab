@@ -2,10 +2,10 @@
 
 module Ripple_Carry_Adder_t;
 
-    reg [8-1:0] a = 0, b = 0;
+    reg [8-1:0] a, b;
     wire [8-1:0] sum;
     wire cout;
-    reg cin = 0;
+    reg cin;
 
     Ripple_Carry_Adder RCA (
         .a(a),
@@ -16,26 +16,24 @@ module Ripple_Carry_Adder_t;
     );
 
     initial begin
-        repeat(10) begin
-            #1;
-            if (a + b + cin != sum) begin
-                $display("Error: %d + %d + %d != %d", a, b, cin, sum);
+        a = 0;
+        b = 0;
+        cin = 0;
+        repeat(2)begin
+            repeat(2**8) begin
+                repeat(2**8) begin
+                    #1;
+                    $display("a: %d, b: %d, cin: %d, sum: %d, cout: %d", a, b, cin, sum, cout);
+                    if (a + b + cin != sum) begin
+                        $display("Error: %d + %d + %d != %d", a, b, cin, sum);
+                        $finish;
+                    end
+                    a = a + 1;
+                end
+                b = b + 1;
             end
-            a = a + 23;
-            b = b + 17;
+            cin = 1;
         end
         $finish;
     end
-
-    // initial begin
-    //     for (b = 0; b < 256; b = b + 25) begin
-    //         #1;
-    //         if ((a + b + cin) != sum) begin
-    //             $display("Error: %d + %d + %d = %d != %d", a, b, cin, a + b + cin, sum);
-    //         end
-    //         cin = ^cin;
-    //     end
-    //     $finish;
-    // end
-    
 endmodule
