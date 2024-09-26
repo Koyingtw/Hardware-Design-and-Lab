@@ -70,7 +70,7 @@ initial begin
             default: 
                 $display("Error: unknown sel");
         endcase
-    end;
+    end
     $finish;
 end
 
