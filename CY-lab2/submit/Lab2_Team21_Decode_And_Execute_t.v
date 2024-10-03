@@ -41,7 +41,7 @@ initial begin
             end
             3'b100: begin
                 $display("%d >> 1 = %d", rt, rd);
-                if (rd != {rt[0], rt[3], rt[2], rt[1]}) begin
+                if (rd != {rt[3], rt[3], rt[2], rt[1]}) begin
                     $display("Error: rd != rt >> 1, expeted: %d, got: %d", {rt[0], rt[3], rt[2], rt[1]}, rd);
                     $finish;
                 end

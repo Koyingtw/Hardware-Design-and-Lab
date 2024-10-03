@@ -115,7 +115,7 @@ output [4-1:0] out;
 AND and1(out[0], a[1], 1'b1);
 AND and2(out[1], a[2], 1'b1);
 AND and3(out[2], a[3], 1'b1);
-AND and4(out[3], a[0], 1'b1);
+AND and4(out[3], a[3], 1'b1);
 endmodule
 
 module LSHIFT(out, a);

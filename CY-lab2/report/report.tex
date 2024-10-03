@@ -362,14 +362,14 @@ ADD 的實現同樣基於章節\ref{sec:Q1}實現的加法器，將 $(a, b, cin)
   \label{fig:OR-AND}
 \end{figure}
 
-\subsubsection*{RIGHT SHIFT}
-由於一個 4-bit 的數字右移一位後，$out_0 \sim out_3$ 分別會對應到 $in_1, in_2, in_3, in_0$ \
+\subsubsection*{ARI RIGHT SHIFT}
+由於一個 4-bit 的數字以 ARI 的方式右移一位後，$out_0 \sim out_3$ 分別會對應到 $in_1, in_2, in_3, in_3$ \
 因此只需要透過與 $1$ 做 AND 能夠實現 assign 的特性，將輸出對應到正確的輸入即可\
 如圖 \ref{fig:SHIFT} 右側。
 
 
-\subsubsection*{LEFT SHIFT}
-左移實作方式與右移相同，唯一的區別在於 $out_0 \sim out_3$ 分別對應到的是 $in_3, in_0, in_1, in_2$\
+\subsubsection*{CIR LEFT SHIFT}
+左移實作方式與右移相同，唯一的區別在於在 CIR 左移的方式，$out_0 \sim out_3$ 分別對應到的是 $in_3, in_0, in_1, in_2$\
 如圖 \ref{fig:SHIFT} 左側。
 
 
