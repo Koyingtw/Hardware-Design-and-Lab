@@ -10,14 +10,15 @@ output reg [8-1:0] dout;
 reg [8-1:0] mem [128-1:0];
 
 always @(posedge clk) begin
-    if (wen && !ren) begin
-        mem[addr] = din;
-    end
     if (ren) begin
-        dout = mem[addr];
+        dout <= mem[addr];
+    end
+    else if (wen) begin
+        mem[addr] <= din;
+        dout <= 0;
     end
     else begin
-        dout = 8'd0;
+        dout <= 0;
     end
 
 end
