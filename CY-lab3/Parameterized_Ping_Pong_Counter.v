@@ -17,7 +17,7 @@ always @(posedge clk) begin
         direction <= 1;
         out <= 0;
     end 
-    else if (started && enable && ((out == min) + (out == max)) < 2) begin
+    else if (started && enable && ((out <= min) + (out >= max)) < 2) begin
         if (flip) begin
             direction <= ~direction;
         end
