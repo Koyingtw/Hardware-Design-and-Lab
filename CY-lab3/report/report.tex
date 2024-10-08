@@ -1,0 +1,338 @@
+%% 该模板修改自《计算机学报》latex 模板
+%% 主要是将双栏改成单栏，去掉了部分计算机学报标识；
+%% 源文件自：https://www.overleaf.com/latex/templates/latextemplet-cjc-xelatex/ybmmymncrrmw
+%% 
+%%
+%% This is file `CjC_template_tex.tex',
+%% is modified by Zhi Wang (zhiwang@ieee.org) based on the template 
+%% provided by Chinese Journal of Computers (http://cjc.ict.ac.cn/).
+%%
+%% This version is capable with Overleaf (XeLaTeX).
+%%
+%% Update date: 2023/03/10
+%% -------------------------------------------------------------------
+%% Copyright (C) 2016--2023 
+%% -------------------------------------------------------------------
+%% This file may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either version 1.3c
+%% of this license or (at your option) any later version.
+%% The latest version of this license is in
+%%    https://www.latex-project.org/lppl.txt
+%% and version 1.3c or later is part of all distributions of LaTeX
+%% version 2008 or later.
+%% -------------------------------------------------------------------
+
+\documentclass[10.5pt,compsoc,UTF8]{CjC}
+\usepackage{CTEX}
+\usepackage{graphicx}
+\usepackage{footmisc}
+\usepackage{subfigure}
+\usepackage{url}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage[noadjust]{cite}
+\usepackage{amsmath,amsthm}
+\usepackage{amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{color}
+\usepackage{ccaption}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{fancyhdr}
+\usepackage{caption}
+\usepackage{xcolor,stfloats}
+\usepackage{comment}
+\setcounter{page}{1}
+\graphicspath{{figures/}}
+\usepackage{cuted}%flushend,
+\usepackage{captionhack}
+\usepackage{epstopdf}
+\usepackage{gbt7714}
+\usepackage{listings}
+\usepackage{xeCJK}
+\usepackage{float}
+\usepackage{sourcecodepro}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+
+\setmainfont{Times Roman}
+% \setCJKmainfont{Noto Sans Mono CJK TC}
+\setCJKmainfont{標楷體.ttc}
+\setmonofont{Cascadia Code}
+
+%===============================%
+
+\headevenname{\mbox{\quad} \hfill  \mbox{\zihao{-5}{ \hfill 2024 Hardware Design  } \hspace {50mm} \mbox{2024 年 2 月}}}%
+\headoddname{Group 21 \hfill Lab 1: Gate-Level Verilog}%
+
+%footnote use of *
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\setcounter{footnote}{0}
+\renewcommand\footnotelayout{\zihao{5-}}
+
+\newtheoremstyle{mystyle}{0pt}{0pt}{\normalfont}{1em}{\bf}{}{1em}{}
+\theoremstyle{mystyle}
+\renewcommand\figurename{figure~}
+\renewcommand{\thesubfigure}{(\alph{subfigure})}
+\newcommand{\upcite}[1]{\textsuperscript{\cite{#1}}}
+\renewcommand{\labelenumi}{(\arabic{enumi})}
+\newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}
+\newcommand{\abc}{\color{white}\vrule width 2pt}
+\renewcommand{\bibsection}{}
+\makeatletter
+\renewcommand{\@biblabel}[1]{[#1]\hfill}
+\makeatother
+\setlength\parindent{2em}
+%\renewcommand{\hth}{\begin{CJK*}{UTF8}{gbsn}}
+%\renewcommand{\htss}{\begin{CJK*}{UTF8}{gbsn}}
+\renewcommand{\contentsname}{Table of Contents}
+
+\begin{document}
+
+\hyphenpenalty=50000
+\makeatletter
+\newcommand\mysmall{\@setfontsize\mysmall{7}{9.5}}
+\newenvironment{tablehere}
+  {\def\@captype{table}}
+
+\let\temp\footnote
+\renewcommand \footnote[1]{\temp{\zihao{-5}#1}}
+
+\hypersetup{
+  colorlinks=false,
+  pdfborder={0 0 0},
+}
+
+\thispagestyle{plain}%
+\thispagestyle{empty}%
+\pagestyle{CjCheadings}
+
+% \begin{table*}[!t]
+\vspace {-13mm}
+
+
+\onecolumn
+\zihao{5-}\noindent Group 21 \hfill Lab 3: Sequential Circuits \hfill 2024 年 10 月\\
+\noindent\rule[0.25\baselineskip]{\textwidth}{1pt}
+
+
+\begin{center}
+    \vspace {11mm}
+    {\zihao{2} \heiti \fangsong Lab 3: Sequential Circuits }
+    
+    \vskip 5mm
+    
+    {\zihao{4}\fangsong Group 21: 陳克盈（112062205）、蔡明妡（112062224）}
+\end{center}
+
+\lstset{
+    % backgroundcolor=\color{red!50!green!50!blue!50},%程式碼塊背景色為淺灰色
+    rulesepcolor= \color{gray}, %程式碼塊邊框顏色
+    breaklines=true,  %程式碼過長則換行
+    numbers=left, %行號在左側顯示
+    numberstyle= \small\ttfamily,%行號字型
+    keywordstyle= \color{blue},%關鍵字顏色
+    commentstyle=\color{gray}, %註釋顏色
+    frame=shadowbox%用方框框住程式碼塊
+    basicstyle=\ttfamily\footnotesize,
+}
+ 
+\definecolor{improvecolor}{rgb}{0,0.6,0} % 深綠色
+\definecolor{declinecolor}{rgb}{0.6,0,0} % 深紅色
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\zihao{5}
+\vskip 10mm
+% \begin{multicols}{1}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tableofcontents
+\newpage
+
+\section{Q1: 4-bit Ping-Pong Counter}
+\label{sec:Q1}
+
+\subsection{Implement}
+這題需要實作一個 4-bit 的 Ping-Pong Counter，會從 0 開始累加\
+，直到 15 後再從 15 開始減少至 0，不斷循環。
+
+在 verilog 程式碼方面，我們使用了多個 if 條件式，判斷目前屬於什麼狀態：
+\begin{itemize}
+  \item $rst\_n = 0$: 將 $started, direction$ 設為 true, 並將輸出 $out$ 設為 $0$。
+  \item $started \& enable$：代表 Counter 正在運作，此時會根據 $direction$ 進行加減：
+  \begin{itemize}
+    \item $out = 15, direction = 1$：代表再繼續往上就會超出範圍，因此將 $direction$ 設為 $0$ 並將輸出 $-1$
+    \item $out = 0, direction = 0$：與上個情況相反，將 $direction$ 設為 $1$ 並將輸出 $+1$
+    \item 其他情況：根據 $direction$ 進行加減
+  \end{itemize}
+\end{itemize}
+
+這裡要放 code 截圖
+
+\subsection{Circuit}
+
+在電路方面，需要實作的部分如下：
+\begin{itemize}
+  \item $started, direction, out$ 儲存：使用了三個 D-Flip-Flop 來儲存
+  \item 計算下一個 clock cycle 的 $out, direction$：每個 clock cycle 會根據當下的 $out, direction$，透過加減法器預先算出 $out + 1, out - 1$，\
+  再透過多個 AND gate, NOT Gate，來實作出上述的條件式，分別導至四條線路。\
+  最後，再利用 MUX，根據對應的線路與條件來決定下一個 clock cycle 的 $out$ 以及 $direction$。
+  \item enable：算出 $out, direction$ 之後，利用 MUX 處理 $enable$，若是 $enable = True$，則將 新的 $out, direction$ 輸入至 D-Flip-Flop，\
+  否則就輸入原來的值。
+  \item reset：在上述訊號都處理完後，會再經過一關判斷是否需要 reset，如果不用則使用上述計算出來的值，否則就將該值設為初始值。
+\end{itemize}
+
+這裡要放電路圖
+
+\subsection{Testbench}
+由於操作相較單純，因此直接利用一個迴圈跑 $2^8$ 次，每次都將 enable 反轉，觀察輸出是否符合預期：
+
+這裡放程式碼截圖
+
+這裡放波形圖部分
+
+這裡放波形圖全貌
+
+\section{Q2: First-In First Out (FIFO) Queue}
+\label{sec:Q2}
+
+\subsection{Implement}
+
+這邊要實現一個 8 個 8-bit 資料的 Queue (First in First out)，\
+實作內容主要以這幾個數值的計算為主：
+\begin{itemize}
+  \item $started$：是否開始運作，為 register，會在每個 posedge 時被計算
+  \item $raddr$：讀取的位址，為 register，會在每個 posedge 時被計算
+  \item $wadd$：下一次要寫入的位址，為 register，會在每個 posedge 時被計算
+  \item $count$：目前 Queue 中有幾個資料，為 register，會在每個 posedge 時被計算
+  \item $error$：是否有錯誤，為 wire，判斷方式為：\
+  當 $count = 0$ 且 $ren = 0$，或是 $count = 8$ 且 $wen = 1$ 時，error 為 True，\
+  前者代表沒有資料可以讀取，後者代表沒有空間可以寫入。
+\end{itemize}
+
+而操作過程如下：
+\begin{enumerate}
+  \item reset：當 $rst\_n$ 與 $started$ 皆為 False 時，將 $started$ 設為 True
+  \item 開始後，如果沒有錯誤且 $ren = 1$，則將輸出設定為 $raddr$ 的位置、將 $raddr$ 設為 $raddr + 1$，\
+  以及將 $count$ 減一
+  \item 如果上述條件都沒有達到，且要寫入的話，則將 $waddr$ 的位置設定為 $din$ (data input)、\
+  將 $waddr$ 設為 $waddr + 1$，以及將 $count$ 加一
+\end{enumerate}
+
+以此邏輯實現的程式碼就會如下圖所示：
+
+這裡放程式碼截圖
+
+\subsection{Circuit}
+
+\subsubsection*{Memory}
+首先先介紹我們設計的記憶體單位，我們透過 8 個 8-bit 的 D-Flip-Flop 作為儲存單位，\ 
+而記憶體控制的部分，除了 clock 之外會接收 4 個參數，分別為：
+\begin{itemize}
+  \item $ren$：是否讀取記憶體
+  \item $wen$：是否寫入記憶體
+  \item $addr$：讀取或寫入的記憶體位置
+  \item $din$：寫入的資料
+\end{itemize}
+並且會輸出 $dout$，代表讀取的資料。
+\par
+判斷邏輯會是這樣的步驟：
+\begin{enumerate}
+  \item 如果 $ren = 1$，那麼不執行寫入，直接輸出 $addr$ 這個位置的值
+  \item 如果沒有要讀取，且要寫入的話，那麼就將 $din$ 的值設為是 $addr$ 這個位置新的值
+  \item 沒有要讀取也沒有要寫入的話，就輸出 $0$ 然後不對 DFF 做任何動作
+\end{enumerate}
+
+這裡放程式碼截圖
+
+在電路實現的部分，大致會分成幾層：
+\begin{enumerate}
+  \item 判斷輸入：首先使用比較器對每個位址 $i$ 判斷 $addr$ 是否等於 $i$，\
+  並將其結果與 $!ren \& wen$ 做 AND，得到的結果便是這個位址是否要寫入。
+  \item D-Flip-Flop 控制：在每個 DFF 前加上一個 MUX，根據上述的結果決定 DFF 的輸入是\
+  $din$ 還是原本的值
+  \item 輸出判斷：與第一步相似但相較簡單，直接使用比較器判斷 $addr$ 是否等於 $i$，\
+  並將結果與 DFF 的輸出做 AND，就能得到這個位址的輸出值。由於只會有一個位址會有輸出值，\
+  因此在最後直接做 Bitwise OR 就可以得到最終的輸出。
+\end{enumerate}
+
+下圖演示的是 8 個 8-bit 的記憶體，可根據需求調整每個單位的位元大小以及有幾個單位。
+
+這裡放電路圖
+
+\subsubsection*{FIFO}
+FIFO 的部分則是利用了上述的記憶體單位，計算出要傳給 Memory 的 $ren, wen, addr, din$ 後，得到輸出的結果。
+
+這裡放電路圖解釋
+
+這裡放電路圖截圖
+
+\subsection{Testbench}
+我們寫了兩個 Testbench，首先是重現題目範例中的波形圖：
+
+% TODO: 這裡放題目範例截圖
+
+接著是我們使用 SystemVerilog 提供的 Queue，進行更完整的測試。\
+由於 $ren, wen, din$ 的組合數太多，因此我選擇了使用跑 $2^10$ 測試，每次將這些輸入值設定為一個隨機值，\
+藉此來跑到盡可能多的 case，並透過與 SystemVerilog 中，絕對正確的 Queue 來比對是否有錯誤。
+
+% TODO: 這裡放程式碼截圖
+
+\section{Q3: Multi-Bank Memory}
+\label{sec:Q3}
+
+\subsection{Implement}
+
+這題需要實作一個 Multi-Bank Memory，每個 Bank 有 4 個 Sub-Bank，\
+每個 Sub-Bank 由 128 個 8-bit memory 組成，總共有 4 個 Bank。
+
+輸入的部分由以下幾個部分組成：
+\begin{itemize}
+  \item $ren, wen$：是否讀取或寫入
+  \item $raddr$(11 bit)：讀取的位址，前兩個 Bit 代表著是第幾個 Bank，接下來的兩個代表的是第幾個 Subbank。
+  \item $waddr$ (11 bit)：寫入的位址，格式同上
+  \item $din$ (8 bit)：寫入的資料
+\end{itemize}
+
+% TODO: 這裡放題目截圖
+
+
+\subsubsection*{Bank}
+
+
+\subsubsection*{主 Module}
+主要的 Module 負責整體的輸入輸出，將輸入的參數正確的分配給各個 Bank，\
+並將正確的 Bank 輸出導向至最後的輸出。
+
+在處理輸入的部分，主要分為以下步驟：
+\begin{itemize}
+  \item $ren$：直接利用 $ren \& (raddr[10:9]) == i\ (i \in [0, 3])$ 的方式來決定每個 Bank 的 $ren$
+  \item $wen$：分為兩個步驟
+  \begin{enumerate}
+    \item 判斷是否能夠輸入，題目規定，當要求同時讀寫同一個 Sub-bank 時，就以讀的操作為主，因此先利用\
+    \texttt{wen \&\& (ren == 0 || (waddr[10:7] != raddr[10:7]))} 判斷出這次的寫入操作是否合法
+    \item 與 $ren$ 用一樣的方式將上述的信號分配到正確的 Bank
+  \end{enumerate}
+\end{itemize}
+
+至於輸出的部分，我使用了四個 8 bit 的 wire: $out[3:0]$，分別接至四個 Bank 的輸出，\
+由於在處理輸入信號的部分，當該 Bank 不是要求的 Bank 時，output 會直接是 $0$，\
+因此要取得正確的輸出就只要將四個 output 做 Bitwise OR 即可。
+
+% TODO: 這邊放程式碼截圖
+
+這部分
+
+由於 Memory 的部分在 Basic 已經有實作過，因此這邊就直接沿用 Basic 的設計。
+
+\section{Q4: Round-Robin FIFO Arbiter}
+
+\section{Q5: 4-bit Parameterized Ping-Pong Counter}
+
+\end{document}
+
+

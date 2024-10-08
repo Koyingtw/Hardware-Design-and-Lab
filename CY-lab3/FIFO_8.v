@@ -20,13 +20,11 @@ reg [3:0] count;
 assign error = (started && (count == 0 && ren)) || (started && (count == 8 && !ren && wen));
 
 always @(posedge clk) begin
-    if (!rst_n && !started) begin
+    if (!rst_n) begin
         waddr <= 0;
         raddr <= 0;
         started <= 1;
         dout <= 0;
-        empty <= 1;
-        full <= 0;
         count <= 0;
     end 
     else if (started) begin
@@ -39,14 +37,12 @@ always @(posedge clk) begin
                 dout <= mem[raddr];
                 raddr <= raddr + 1;
                 count <= count - 1;
-                full <= 0;
                 $display("Read: %d", mem[raddr]);
             end
-            else if (wen && !error) begin
+            else if (wen) begin
                 count <= count + 1;
                 mem[waddr] <= din;
                 waddr <= waddr + 1;
-                empty <= 0;
                 $display("Write: %d", din);
             end
         end

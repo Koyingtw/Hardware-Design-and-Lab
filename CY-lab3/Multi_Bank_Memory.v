@@ -11,8 +11,8 @@ output [8-1:0] dout;
 wire [8-1:0] out [3:0];
 reg [11-1:0] waddr_reg, raddr_reg;
 
-// assign dout = out[0] | out[1] | out[2] | out[3];
-assign dout = clk ? out[raddr[10:9]] : dout;
+assign dout = out[0] | out[1] | out[2] | out[3];
+// assign dout = clk ? out[raddr[10:9]] : dout;
 wire write = wen && (ren == 0 || (waddr[10:7] != raddr[10:7]));
 
 Bank bank0(clk, ren && (raddr[10:9] == 0), write && (waddr[10:9] == 0), 
@@ -36,8 +36,8 @@ output [8-1:0] dout;
 
 wire [8-1:0] out [3:0];
 
-// assign dout = out[0] | out[1] | out[2] | out[3];
-assign dout = clk ? out[raddr[8:7]] : dout;
+assign dout = out[0] | out[1] | out[2] | out[3];
+// assign dout = clk ? out[raddr[8:7]] : dout;
 
 wire read, write;
 wire [6:0] address;
