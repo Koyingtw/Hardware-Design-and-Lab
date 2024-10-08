@@ -303,6 +303,13 @@ FIFO 的部分則是利用了上述的記憶體單位，計算出要傳給 Memor
 
 \subsubsection*{Bank}
 
+這邊首先建立了四個長度 128，位寬 8-bit 的記憶體，而我們要做的事就是正確的算出要輸入到記憶體的參數是什麼：
+\begin{itemize}
+  \item $ren$：利用與 $raddr[8:7] == i\ (i \in [0, 3])$ 做 AND 運算，來決定這個記憶體單位要不要讀取
+  \item $wen$：與 $ren$ 的處理方式一樣，只是改成使用 $waddr$ 來判斷。
+  \item $address$：透過三元運算子，當 $ren = 1$ 時，將 $address$ 設為 $raddr$，否則就設為 $waddr$
+\end{itemize}
+
 
 \subsubsection*{主 Module}
 主要的 Module 負責整體的輸入輸出，將輸入的參數正確的分配給各個 Bank，\
