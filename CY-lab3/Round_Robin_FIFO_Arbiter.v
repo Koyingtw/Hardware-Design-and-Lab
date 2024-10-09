@@ -29,19 +29,18 @@ always @(posedge clk) begin
         counter <= 0;
         ren <= 0;
     end
-    if (started) begin
+    else begin
         $display("counter: %d, valid: %d, error[counter]: %d, wen[counter]: %d, ren[counter]: %d", counter, valid, error[counter], wen[counter], ren[counter]);
 
         $display("out[0]: %d, out[1]: %d, out[2]: %d, out[3]: %d", out[0], out[1], out[2], out[3]);
-        ren[(counter + 1) % 4] <= 1;
-        ren[counter] <= 0; 
-        if (wen[counter] || error[counter]) begin
-            valid <= 0;
-        end
-        else begin
-            valid <= 1;
-        end
+        ren <= 4'b0001 << (counter + 1) % 4;
         counter <= counter + 1;
+    end
+    if (wen[counter] || error[counter]) begin
+        valid <= 0;
+    end
+    else begin
+        valid <= 1;
     end
 end
 endmodule

@@ -310,6 +310,8 @@ FIFO 的部分則是利用了上述的記憶體單位，計算出要傳給 Memor
   \item $address$：透過三元運算子，當 $ren = 1$ 時，將 $address$ 設為 $raddr$，否則就設為 $waddr$
 \end{itemize}
 
+% TODO: 這裡放程式碼截圖
+
 
 \subsubsection*{主 Module}
 主要的 Module 負責整體的輸入輸出，將輸入的參數正確的分配給各個 Bank，\
@@ -332,11 +334,21 @@ FIFO 的部分則是利用了上述的記憶體單位，計算出要傳給 Memor
 
 % TODO: 這邊放程式碼截圖
 
-這部分
+\subsection{Circuit}
 
-由於 Memory 的部分在 Basic 已經有實作過，因此這邊就直接沿用 Basic 的設計。
+\subsubsection*{Memory}
+這部分沿用的是前面提到的 Memory，將其長度擴充為 128，由於篇幅關係就不額外展示長度 128 的電路圖。
+
+\subsubsection*{Bank}
+% TODO: 這裡放電路圖
+
+
+\subsubsection*{主 Module}
+
 
 \section{Q4: Round-Robin FIFO Arbiter}
+
+\subsection{Implement}
 
 \section{Q5: 4-bit Parameterized Ping-Pong Counter}
 
