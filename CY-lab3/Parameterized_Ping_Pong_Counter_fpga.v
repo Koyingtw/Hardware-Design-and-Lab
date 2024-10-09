@@ -18,10 +18,19 @@ reg enable = 0;
 wire [16-1:0] num [1:0];
 wire [16-1:0] _num[1:0];
 reg cnt_en = 0;
-reg rst_n = 1;
-reg flip = 0;
+reg rst_n;
+reg flip;
 reg [3:0] min, max;
 wire [6:0] seg [3:0];
+
+
+wire dflip, drst_n;
+wire oprst_n, opflip;
+
+debounce De1(dflip, DOWN, clk);
+debounce De2(drst_n, UP, clk);
+onepulse OP1(drst_n, clk, oprst_n);
+onepulse OP2(dflip, clk, opflip);
 
 Parameterized_Ping_Pong_Counter_fpga PPC(
     .clk(clk),
@@ -40,9 +49,9 @@ reg is_flip = 0;
 reg started = 0;
 
 always @(posedge clk) begin
-    if (UP && !started) begin
-        is_rst <= 0;
-        is_flip <= 0;
+    flip <= opflip;
+    rst_n <= ~oprst_n;
+    if (!rst_n) begin
         started <= 1;
         counter <= 0;
     end
@@ -65,30 +74,6 @@ always @(posedge clk) begin
             cnt_en <= 0;
         end
         enable <= SW[15];
-
-        if (UP == 1) begin
-            if (is_rst) rst_n <= 1;
-            else begin
-                rst_n <= 0;
-                is_rst <= 1;
-            end
-        end
-        else begin
-            is_rst <= 0;
-            rst_n <= 1;
-        end
-
-        if (DOWN == 1) begin
-            if (is_flip) flip <= 0;
-            else begin
-                flip <= 1;
-                is_flip <= 1;
-            end
-        end
-        else begin
-            is_flip <= 0;
-            flip <= 0;
-        end
 
         min <= SW[10:7];
         max <= SW[14:11];
@@ -141,6 +126,7 @@ input [4-1:0] max;
 input [4-1:0] min;
 output reg direction;
 output reg [4-1:0] out;
+
 
 reg started = 0;
 
@@ -235,4 +221,29 @@ output out;
 nor and1(out, num[2], num[3], num[4],
         num[5], num[6], num[8], num[9], num[10],
         num[11], num[13], num[14], num[15]);
+endmodule
+
+module debounce (pb_debounced, pb, clk);
+output pb_debounced; // signal of a pushbutton after being debounced
+input pb; // signal from a pushbutton
+input clk;
+reg [3:0] DFF; // use shift_reg to filter pushbutton bounce
+always @(posedge clk)
+begin
+DFF[3:1] <= DFF[2:0];
+DFF[0] <= pb;
+end
+assign pb_debounced = ((DFF == 4'b1111) ? 1'b1 : 1'b0);
+endmodule
+
+module onepulse (PB_debounced, CLK, PB_one_pulse);
+input PB_debounced;
+input CLK;
+output PB_one_pulse;
+reg PB_one_pulse;
+reg PB_debounced_delay;
+always @(posedge CLK) begin
+PB_one_pulse <= PB_debounced & (! PB_debounced_delay);
+PB_debounced_delay <= PB_debounced;
+end
 endmodule

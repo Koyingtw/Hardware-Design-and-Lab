@@ -5,49 +5,69 @@ input clk;
 input rst_n;
 input wen, ren;
 input [8-1:0] din;
-output reg [8-1:0] dout;
+output [8-1:0] dout;
 output wire error;
 
-reg [8-1:0] mem [0:7];
+wire [3-1:0] addr;
+wire [7:0] memout;
+assign addr = (ren) ? raddr : waddr;
+
+// reg [8-1:0] mem [0:7];
+Memory_8 mem(clk, ren & (~error), wen & (~error), addr, din, memout);
 
 reg [3-1:0] waddr, raddr;
 
 reg started = 0;
-reg empty = 1;
-reg full = 0;
 reg [3:0] count;
 
 assign error = (started && (count == 0 && ren)) || (started && (count == 8 && !ren && wen));
+assign dout = rst_n ? memout : 0;
 
 always @(posedge clk) begin
     if (!rst_n) begin
         waddr <= 0;
         raddr <= 0;
-        started <= 1;
-        dout <= 0;
         count <= 0;
+        started <= 1;
     end 
-    else if (started) begin
-        if (error) begin
-            $display("Error: %d", error);
-        end
-        else if (ren || wen) begin
-            // error <= 0;
+    else if (started) begin        
+        if (!error) begin
             if (ren) begin
-                dout <= mem[raddr];
                 raddr <= raddr + 1;
                 count <= count - 1;
-                $display("Read: %d", mem[raddr]);
             end
             else if (wen) begin
                 count <= count + 1;
-                mem[waddr] <= din;
                 waddr <= waddr + 1;
-                $display("Write: %d", din);
             end
         end
 
     end
+end
+
+endmodule
+
+module Memory_8 (clk, ren, wen, addr, din, dout);
+input clk;
+input ren, wen;
+input [3-1:0] addr;
+input [8-1:0] din;
+output reg [8-1:0] dout;
+
+reg [8-1:0] mem [8-1:0];
+
+always @(posedge clk) begin
+    if (ren) begin
+        dout <= mem[addr];
+    end
+    else if (wen) begin
+        mem[addr] <= din;
+        dout <= 0;
+    end
+    else begin
+        dout <= 0;
+    end
+
 end
 
 endmodule
