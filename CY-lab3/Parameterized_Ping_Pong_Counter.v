@@ -17,10 +17,17 @@ always @(posedge clk) begin
         direction <= 1;
         out <= 0;
     end 
-    else if (started && enable && out <= max && out >= min) begin
-        if (flip) begin
-            direction <= ~direction;
+    else if (flip && out > min && out < max) begin
+        direction <= ~direction;
+        started <= started;
+        if (direction ^ flip) begin
+            out <= out + 1;
         end
+        else begin
+            out <= out - 1;
+        end
+    end
+    else if (started && enable && out <= max && out >= min) begin
         if (out == max && (direction ^ flip) == 1) begin
             direction <= 0;
             out <= out - 1;
@@ -30,11 +37,19 @@ always @(posedge clk) begin
             out <= out + 1;
         end
         else if (direction ^ flip) begin
+            direction <= direction;
             out <= out + 1;
         end 
         else begin
+            direction <= direction;
             out <= out - 1;
         end
+        started <= started;
+    end
+    else begin
+        direction <= direction;
+        out <= out;
+        started <= started;
     end
 end
 

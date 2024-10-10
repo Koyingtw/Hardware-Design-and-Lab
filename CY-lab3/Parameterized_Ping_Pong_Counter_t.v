@@ -17,39 +17,39 @@ Parameterized_Ping_Pong_Counter PPC(clk, rst_n, enable, flip, max, min, directio
 
 
 always begin
-    #1 clk = ~clk;
+    #2 clk = ~clk;
 end
 
 initial begin
-    #4 rst_n = 0;
+    // rst_n = 0;
     #4 rst_n = 1;
 end
 
 initial begin
     clk = 0;
-    rst_n = 1;
+    rst_n = 0;
     enable = 1;
     started = 1;
     min = 0;
     max = 4;
     flip = 0;
-    #8
+    #16
 
 
-    repeat(3) begin
-        #2;
-        $display("min: %d, max: %d", min, max);
-        $display("out: %d, direction: %d", out, direction);
-    end
 
     flip = 1;
     #2
     flip = 0;
-    repeat(3) begin
-        #2;
-        $display("min: %d, max: %d", min, max);
-        $display("out: %d, direction: %d", out, direction);
-    end
+
+    flip = 1;
+    #2
+    flip = 0;
+
+    #4
+
+    flip = 1;
+    #2
+    flip = 0;
 
     flip = 1;
     #2
@@ -72,9 +72,6 @@ initial begin
         $display("min: %d, max: %d", min, max);
         $display("out: %d, direction: %d", out, direction);
     end
-    
-    min = out;
-    max = out;
 
     repeat(5) begin
         #2;

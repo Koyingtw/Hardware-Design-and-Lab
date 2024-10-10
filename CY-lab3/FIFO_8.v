@@ -6,7 +6,7 @@ input rst_n;
 input wen, ren;
 input [8-1:0] din;
 output [8-1:0] dout;
-output wire error;
+output reg error;
 
 wire [3-1:0] addr;
 wire [7:0] memout;
@@ -20,7 +20,7 @@ reg [3-1:0] waddr, raddr;
 reg started = 0;
 reg [3:0] count;
 
-assign error = (started && (count == 0 && ren)) || (started && (count == 8 && !ren && wen));
+// assign error = (started && (count == 0 && ren)) || (started && (count == 8 && !ren && wen));
 assign dout = rst_n ? memout : 0;
 
 always @(posedge clk) begin
@@ -29,9 +29,11 @@ always @(posedge clk) begin
         raddr <= 0;
         count <= 0;
         started <= 1;
+        error <= 0;
     end 
-    else if (started) begin        
-        if (!error) begin
+    else if (started) begin     
+        error <= (started && (count == 0 && ren)) || (started && (count == 8 && !ren && wen)); 
+        if (!((started && (count == 0 && ren)) || (started && (count == 8 && !ren && wen)))) begin
             if (ren) begin
                 raddr <= raddr + 1;
                 count <= count - 1;
@@ -40,8 +42,17 @@ always @(posedge clk) begin
                 count <= count + 1;
                 waddr <= waddr + 1;
             end
+            else begin
+                count <= count;
+                raddr <= raddr;
+                waddr <= waddr;
+            end
         end
-
+        else begin
+            count <= count;
+            raddr <= raddr;
+            waddr <= waddr;
+        end
     end
 end
 

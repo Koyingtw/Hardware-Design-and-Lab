@@ -55,19 +55,23 @@ always @(posedge clk) begin
         started <= 1;
         counter <= 0;
     end
-    if (started) begin
+    else if (flip) begin
+        started <= started;
+        counter <= 0;
+    end
+    else if (started) begin
         $display("min: %d, max: %d", min, max);
         $display("UP: %d, DOWN: %d", UP, DOWN);
         $display("out: %d, direction: %d", digit, direction);
         $display("counter: %d", counter);
         $display("cnt_en: %d, enable: %d, rst_n: %d, flip: %d", cnt_en, enable, rst_n, flip);
-        // $display("num: %b, _num: %b", num, _num);
 
-        if (rst_n) 
-            counter <= (counter + 1) % 1000000000;
+        if (rst_n && counter < 33554432) // 2^24
+            counter <= (counter + 1);
         else
-            counter <= 1;
-        if ((counter % 50000000) == 50000000 - 1) begin
+            counter <= 0;
+
+        if (counter == 33554432 - 1) begin
             cnt_en <= 1;
         end
         else begin
@@ -80,10 +84,10 @@ always @(posedge clk) begin
     end
 end
 
-assign num[1] = 1 << (digit / 10);
-assign num[0] = 1 << (digit % 10);
-assign _num[1] = ~(1 << (digit / 10));
-assign _num[0] = ~(1 << (digit % 10));
+assign num[1] = 1 << (digit >= 10);
+assign num[0] = 1 << (digit >= 10 ? digit - 10 : digit);
+assign _num[1] = ~num[1];
+assign _num[0] = ~num[0];
 SymbolA A3(.num(num[1]), ._num(_num[1]), .out(seg[3][0]));
 SymbolB B3(.num(num[1]), ._num(_num[1]), .out(seg[3][1]));
 SymbolC C3(.num(num[1]), ._num(_num[1]), .out(seg[3][2]));
@@ -102,18 +106,11 @@ SymbolG G2(.num(num[0]), ._num(_num[0]), .out(seg[2][6]));
 
 assign seg[1] = (direction == 1) ? ~(7'b0100011) : ~(7'b0011100);
 assign seg[0] = (direction == 1) ? ~(7'b0100011) : ~(7'b0011100);
-assign seg_out = seg[(counter / 100000) % 4];
-assign an[0] = ((counter / 100000) % 4) != 0;
-assign an[1] = ((counter / 100000) % 4) != 1;
-assign an[2] = ((counter / 100000) % 4) != 2;
-assign an[3] = ((counter / 100000) % 4) != 3;
-
-// always @(posedge clk) begin
-//     if (started) begin
-//     end
-// end
-
-
+assign seg_out = seg[counter[16:15]];
+assign an[0] = counter[16:15] != 0;
+assign an[1] = counter[16:15] != 1;
+assign an[2] = counter[16:15] != 2;
+assign an[3] = counter[16:15] != 3;
 
 endmodule
 
@@ -136,23 +133,33 @@ always @(posedge clk) begin
         direction <= 1;
         out <= 0;
     end 
-    else if (started && enable && out <= max && out >= min) begin
-        if (flip) begin
-            direction <= ~direction;
+    else if (flip && out > min && out < max) begin
+        direction <= ~direction;
+        if (direction ^ flip) begin
+            out <= out + 1;
         end
+        else begin
+            out <= out - 1;
+        end
+    end
+    else if (started && enable && out <= max && out >= min) begin
         if (out == max && (direction ^ flip) == 1) begin
             direction <= 0;
             if (cnt_en) out <= out - 1;
+            else out <= out;
         end
         else if (out == min && (direction ^ flip) == 0) begin
             direction <= 1;
             if (cnt_en) out <= out + 1;
+            else out <= out;
         end
         else if (direction ^ flip) begin
             if (cnt_en) out <= out + 1;
+            else out <= out;
         end 
         else begin
             if (cnt_en) out <= out - 1;
+            else out <= out;
         end
     end
 end
