@@ -62,8 +62,8 @@
 
 %===============================%
 
-\headevenname{\mbox{\quad} \hfill  \mbox{\zihao{-5}{ \hfill 2024 Hardware Design  } \hspace {50mm} \mbox{2024 年 2 月}}}%
-\headoddname{Group 21 \hfill Lab 1: Gate-Level Verilog}%
+\headevenname{\mbox{\quad} \hfill  \mbox{\zihao{-5}{ \hfill 2024 Hardware Design  } \hspace {50mm} \mbox{2024 年 10 月}}}%
+\headoddname{Group 21 \hfill Lab 3: Sequential-Circuits}%
 
 %footnote use of *
 \renewcommand{\thefootnote}{\fnsymbol{footnote}}
@@ -112,13 +112,13 @@
 
 
 \onecolumn
-\zihao{5-}\noindent Group 21 \hfill Lab 3: Sequential Circuits \hfill 2024 年 10 月\\
+\zihao{5-}\noindent Group 21 \hfill Lab 3: Sequential-Circuits \hfill 2024 年 10 月\\
 \noindent\rule[0.25\baselineskip]{\textwidth}{1pt}
 
 
 \begin{center}
     \vspace {11mm}
-    {\zihao{2} \heiti \fangsong Lab 3: Sequential Circuits }
+    {\zihao{2} \heiti \fangsong Lab 3: Sequential-Circuits }
     
     \vskip 5mm
     
@@ -704,21 +704,27 @@ $$assign an[3] = counter[16:15] != 3;$$
 
 \section{Other}
 \subsection*{What we have learned}
-首先是記憶體的部分，透過這次的實作，能夠了解到如果要實現讀寫 lock 的話要怎麼實作，\
-並將其應用到第三題的 Multi-Bank Memory 上。該題目呈現了硬體中大致上的記憶體架構，\
-以及電腦是如果透過分區來 lock 讀寫的機制。我想這也是為什麼我們在寫平行程式等需要大量讀寫演算法的時候，\
-會需要考慮 IO lock 的問題。
-\par
-接著是 Sequential Circuit 的部分，由於資料只會在 posedge 的時候改變，\
-會像是 pipeline 的形式，因此在思考如何設計的時候會更加不容易，\
-除了需要考慮到每經過一個 D-Flip-Flop，就會多一個 clock cycle 的延遲，\
-以及資料運算的設計方式，不能用平常在寫程式的變數來思考，必須帶入到一個以「狀態」為單位的思考模式。
-\par
-最後是 FPGA 的部分，上次 Lab 只有顯示一個單位（數字），所以不會有輪詢率的問題，\
-但這次需要顯示四個單位，因此需要讓他們以足夠高且合適的頻率輪流顯示，才能夠清楚地顯示，\
-這部分最簡單的方式就是直接用一個 counter，並除以一個數字來決定要經過幾個 clock cycle 才能夠換下一個單位。\
-但是硬體在除法以及 mod 的運算上特別麻煩，因此我後來想到以二進位的性質，直接存取某幾個 bit 或是左移，\
-只要除數都是 2 的冪次，就能直接實現除法以及 mod。
+\begin{enumerate}
+  \item 記憶體：透過這次的實作，能夠了解到如果要實現讀寫 lock 的話要怎麼實作，\
+  並將其應用到第三題的 Multi-Bank Memory 上。該題目呈現了硬體中大致上的記憶體架構，\
+  以及電腦是如果透過分區來 lock 讀寫的機制。我想這也是為什麼我們在寫平行程式等需要大量讀寫演算法的時候，\
+  會需要考慮 IO lock 的問題。
+  \item Sequential Circuit：由於資料只會在 posedge 的時候改變，\
+  會像是 pipeline 的形式，因此在思考如何設計的時候會更加不容易，\
+  除了需要考慮到每經過一個 D-Flip-Flop，就會多一個 clock cycle 的延遲，\
+  以及資料運算的設計方式，不能用平常在寫程式的變數來思考，必須帶入到一個以「狀態」為單位的思考模式。
+  \item MUX 等工具的運用：之前寫程式或是 Gate Level 的時候，有時候會習慣直接將一個變數以一個 bool expression 來表示，\
+  而不是使用 if 條件式，在寫程式的角度可能會覺得很簡潔有力，但是在畫電路圖的時候，\
+  有時候反而會覺得可讀性降低，反而用 MUX 來處理分支會比較知道那個訊號的意義是什麼。\
+  再加上有些語法本身不容易畫成電路圖，導致最後在畫的時候花了一些時間在修改及測試程式碼，\
+  之後寫的時候應該要更多加注意這樣的程式，是否容易實現成電路。
+  \item FPGA：上次 Lab 只有顯示一個單位（數字），所以不會有輪詢率的問題，\
+  但這次需要顯示四個單位，因此需要讓他們以足夠高且合適的頻率輪流顯示，才能夠清楚地顯示，\
+  這部分最簡單的方式就是直接用一個 counter，並除以一個數字來決定要經過幾個 clock cycle 才能夠換下一個單位。\
+  但是硬體在除法以及 mod 的運算上特別麻煩，因此我後來想到以二進位的性質，直接存取某幾個 bit 或是左移，\
+  只要除數都是 2 的冪次，就能直接實現除法以及 mod。
+  
+\end{enumerate}
 
 \subsection*{分工}
 \begin{itemize}
