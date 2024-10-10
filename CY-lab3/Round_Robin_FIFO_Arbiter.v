@@ -13,6 +13,7 @@ wire [8-1:0] out[3:0];
 wire [3:0] error;
 
 reg wenc;
+reg [1:0] counter;
 
 assign valid = (~(error[(counter + 3) % 4] || wenc));
 assign dout = valid ? out[(counter + 3) % 4] : 0;
@@ -22,22 +23,95 @@ FIFO_8 q1(clk, rst_n, wen[1], ren[1] & (!wen[1]), b, out[1], error[1]);
 FIFO_8 q2(clk, rst_n, wen[2], ren[2] & (!wen[2]), c, out[2], error[2]);
 FIFO_8 q3(clk, rst_n, wen[3], ren[3] & (!wen[3]), d, out[3], error[3]);
 
-reg [1:0] counter;
 
 always @(posedge clk) begin
-    $display("counter: %d, valid: %d, error[counter]: %d, wen[counter]: %d", counter, valid, error[counter], wen[counter]);
     if (!rst_n) begin
         counter <= 0;
         ren <= 0;
         wenc <= 1;
     end
     else begin
-        $display("counter: %d, valid: %d, error[counter]: %d, wen[counter]: %d, ren[counter]: %d", counter, valid, error[counter], wen[counter], ren[counter]);
-
-        $display("out[0]: %d, out[1]: %d, out[2]: %d, out[3]: %d", out[0], out[1], out[2], out[3]);
         ren <= 4'b0001 << (counter + 1) % 4;
         counter <= counter + 1;
         wenc <= wen[counter];
     end
 end
+endmodule
+
+module FIFO_8(clk, rst_n, wen, ren, din, dout, error);
+input clk;
+input rst_n;
+input wen, ren;
+input [8-1:0] din;
+output [8-1:0] dout;
+output reg error;
+
+wire [3-1:0] addr;
+wire [7:0] memout;
+reg [3-1:0] waddr, raddr;
+assign addr = (ren) ? raddr : waddr;
+reg started = 0;
+reg [3:0] count;
+
+// reg [8-1:0] mem [0:7];
+Memory_8 mem(clk, 
+ren & (~((started && (count == 0 && ren)) || (started && (count == 8 && !ren && wen)))), 
+wen & (~((started && (count == 0 && ren)) || (started && (count == 8 && !ren && wen)))), 
+addr, din, memout);
+
+assign dout = rst_n ? memout : 0;
+
+always @(posedge clk) begin
+    if (!rst_n) begin
+        waddr <= 0;
+        raddr <= 0;
+        count <= 0;
+        started <= 1;
+        error <= 0;
+    end 
+    else if (started) begin     
+        error <= (started && (count == 0 && ren)) || (started && (count == 8 && !ren && wen)); 
+        if (!((started && (count == 0 && ren)) || (started && (count == 8 && !ren && wen)))) begin
+            if (ren) begin
+                raddr <= raddr + 1;
+                count <= count - 1;
+            end
+            else if (wen) begin
+                count <= count + 1;
+                waddr <= waddr + 1;
+            end
+            else begin
+                count <= count;
+                raddr <= raddr;
+                waddr <= waddr;
+            end
+        end
+    end
+end
+
+endmodule
+
+module Memory_8 (clk, ren, wen, addr, din, dout);
+input clk;
+input ren, wen;
+input [3-1:0] addr;
+input [8-1:0] din;
+output reg [8-1:0] dout;
+
+reg [8-1:0] mem [8-1:0];
+
+always @(posedge clk) begin
+    if (ren) begin
+        dout <= mem[addr];
+    end
+    else if (wen) begin
+        mem[addr] <= din;
+        dout <= 0;
+    end
+    else begin
+        dout <= 0;
+    end
+
+end
+
 endmodule

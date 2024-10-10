@@ -29,6 +29,7 @@ initial begin
         #5;
         enable = enable ^ 1;
     end
+    $display("Well done");
     $finish;
 end
 

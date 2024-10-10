@@ -10,17 +10,17 @@ output reg error;
 
 wire [3-1:0] addr;
 wire [7:0] memout;
-assign addr = (ren) ? raddr : waddr;
-
-// reg [8-1:0] mem [0:7];
-Memory_8 mem(clk, ren & (~error), wen & (~error), addr, din, memout);
-
 reg [3-1:0] waddr, raddr;
-
+assign addr = (ren) ? raddr : waddr;
 reg started = 0;
 reg [3:0] count;
 
-// assign error = (started && (count == 0 && ren)) || (started && (count == 8 && !ren && wen));
+// reg [8-1:0] mem [0:7];
+Memory_8 mem(clk, 
+ren & (~((started && (count == 0 && ren)) || (started && (count == 8 && !ren && wen)))), 
+wen & (~((started && (count == 0 && ren)) || (started && (count == 8 && !ren && wen)))), 
+addr, din, memout);
+
 assign dout = rst_n ? memout : 0;
 
 always @(posedge clk) begin
@@ -47,11 +47,6 @@ always @(posedge clk) begin
                 raddr <= raddr;
                 waddr <= waddr;
             end
-        end
-        else begin
-            count <= count;
-            raddr <= raddr;
-            waddr <= waddr;
         end
     end
 end

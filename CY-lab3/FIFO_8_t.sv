@@ -32,7 +32,6 @@ always @(posedge clk) begin
     end    
 
     #1;
-    // display time
     
     $display("%t: count = %d", $time, count);
 

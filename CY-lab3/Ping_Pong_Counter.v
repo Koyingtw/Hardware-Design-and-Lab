@@ -29,6 +29,11 @@ always @(posedge clk) begin
             out <= out - 1;
         end
     end
+    else begin
+        direction <= direction;
+        out <= out;
+        started <= started;
+    end
 end
 
 endmodule

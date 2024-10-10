@@ -171,8 +171,6 @@
   \end{itemize}
 \end{itemize}
 
-這裡要放 code 截圖
-
 \subsection{Circuit}
 
 在電路方面，需要實作的部分如下：
@@ -186,21 +184,32 @@
   \item reset：在上述訊號都處理完後，會再經過一關判斷是否需要 reset，如果不用則使用上述計算出來的值，否則就將該值設為初始值。
 \end{itemize}
 
-這裡要放電路圖
+\newpage
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=\textwidth]{./img/Q1.png}
+  \caption{Q1 Circuit}
+  \label{fig:Q1}
+\end{figure}
+
+\newpage
 
 \subsection{Testbench}
 由於操作相較單純，因此直接利用一個迴圈跑 $2^8$ 次，每次都將 enable 反轉，觀察輸出是否符合預期：
 
-這裡放程式碼截圖
-
-這裡放波形圖部分
-
-這裡放波形圖全貌
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=\textwidth]{./img/Q1-tb-wave1.png}
+  \includegraphics[width=\textwidth]{./img/Q1-tb-wave2.png}
+  \caption{Q1 Testbench Wave}
+  \label{fig:Q1-tb}
+\end{figure}
 
 \section{Q2: First-In First Out (FIFO) Queue}
 \label{sec:Q2}
 
-\subsection{Implement}
+\subsection{Implement \& Circuit}
 
 這邊要實現一個 8 個 8-bit 資料的 Queue (First in First out)，\
 實作內容主要以這幾個數值的計算為主：
@@ -223,12 +232,7 @@
   將 $waddr$ 設為 $waddr + 1$，以及將 $count$ 加一
 \end{enumerate}
 
-以此邏輯實現的程式碼就會如下圖所示：
-
-這裡放程式碼截圖
-
-\subsection{Circuit}
-
+\newpage
 
 \subsubsection*{Memory}
 首先先介紹我們設計的記憶體單位，我們透過 8 個 8-bit 的 D-Flip-Flop 作為儲存單位，\ 
@@ -248,8 +252,6 @@
   \item 沒有要讀取也沒有要寫入的話，就輸出 $0$ 然後不對 DFF 做任何動作
 \end{enumerate}
 
-這裡放程式碼截圖
-
 在電路實現的部分，大致會分成幾層：
 \begin{enumerate}
   \item 判斷輸入：首先使用比較器對每個位址 $i$ 判斷 $addr$ 是否等於 $i$，\
@@ -262,26 +264,62 @@
 \end{enumerate}
 
 下圖演示的是 8 個 8-bit 的記憶體，可根據需求調整每個單位的位元大小以及有幾個單位。
+\newpage
 
-這裡放電路圖
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=\textwidth]{./img/Memory.png}
+  \caption{Memory}
+  \label{fig:Memory}
+\end{figure}
+\newpage
 
 \subsubsection*{FIFO}
 FIFO 的部分則是利用了上述的記憶體單位，計算出要傳給 Memory 的 $ren, wen, addr, din$ 後，得到輸出的結果。
 
-這裡放電路圖解釋
-
-這裡放電路圖截圖
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=\textwidth]{./img/Q2.png}
+  \caption{Q2 Circuit}
+  \label{fig:Q2-Circuit}
+\end{figure}
 
 \subsection{Testbench}
 我們寫了兩個 Testbench，首先是重現題目範例中的波形圖：
 
-% TODO: 這裡放題目範例截圖
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=\textwidth]{./img/Q2-tb-ex.png}
+  \caption{Q2 Example Testbench}
+  \label{fig:Q2-tb-ex}
+\end{figure}
+
+\newpage
 
 接著是我們使用 SystemVerilog 提供的 Queue，進行更完整的測試。\
-由於 $ren, wen, din$ 的組合數太多，因此我選擇了使用跑 $2^10$ 測試，每次將這些輸入值設定為一個隨機值，\
-藉此來跑到盡可能多的 case，並透過與 SystemVerilog 中，絕對正確的 Queue 來比對是否有錯誤。
+由於 $ren, wen, din$ 的組合數太多，因此我選擇了使用跑 $2^{10}$ 測試，每次將這些輸入值設定為一個隨機值，\
+藉此來跑到盡可能多的 case，並透過與 SystemVerilog 中，絕對正確的 Queue 來比對是否有錯誤。\
+執行結果如圖 \ref{fig:Q2-tb-sv} 所示。
 
-% TODO: 這裡放程式碼截圖
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{./img/Q2-tb-sv-wave1.png}
+  \includegraphics[width=0.9\textwidth]{./img/Q2-tb-sv-wave2.png}
+  \caption{Q2 SystemVerilog Testbench Wave}
+  \label{fig:Q2-tb-sv}
+\end{figure}
+
+但由於 NTHUCAD 不支援 SystemVerilog，因此額外再寫了一個 Testbench。執行結果如下圖 \ref{fig:Q2-tb} 所示。
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{./img/Q2-tb-wave1.png}
+  \includegraphics[width=0.9\textwidth]{./img/Q2-tb-wave2.png}
+  \caption{Q2 Testbench Wave}
+  \label{fig:Q2-tb}
+\end{figure}
+
+\newpage
 
 \section{Q3: Multi-Bank Memory}
 \label{sec:Q3}
@@ -289,7 +327,14 @@ FIFO 的部分則是利用了上述的記憶體單位，計算出要傳給 Memor
 \subsection{Implement}
 
 這題需要實作一個 Multi-Bank Memory，每個 Bank 有 4 個 Sub-Bank，\
-每個 Sub-Bank 由 128 個 8-bit memory 組成，總共有 4 個 Bank。
+每個 Sub-Bank 由 128 個 8-bit memory 組成，總共有 4 個 Bank，如下圖 \ref{fig:Q3-spec} 所示。
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{./img/Q3-spec.png}
+  \caption{Q3 Spec}
+  \label{fig:Q2-spec}
+\end{figure}
 
 輸入的部分由以下幾個部分組成：
 \begin{itemize}
@@ -299,7 +344,6 @@ FIFO 的部分則是利用了上述的記憶體單位，計算出要傳給 Memor
   \item $din$ (8 bit)：寫入的資料
 \end{itemize}
 
-% TODO: 這裡放題目截圖
 
 
 \subsubsection*{Bank}
@@ -317,8 +361,6 @@ FIFO 的部分則是利用了上述的記憶體單位，計算出要傳給 Memor
   \item $wen$：與 $ren$ 的處理方式一樣，只是改成使用 $waddr$ 來判斷。
   \item $address$：透過三元運算子，當 $ren = 1$ 時，將 $address$ 設為 $raddr$，否則就設為 $waddr$
 \end{itemize}
-
-% TODO: 這裡放程式碼截圖
 
 
 \subsubsection*{主 Module}
@@ -341,7 +383,7 @@ FIFO 的部分則是利用了上述的記憶體單位，計算出要傳給 Memor
 由於在處理輸入信號的部分，當該 Bank 不是要求的 Bank 時，output 會直接是 $0$，\
 因此要取得正確的輸出就只要將四個 output 做 Bitwise OR 即可。
 
-% TODO: 這邊放程式碼截圖
+\newpage
 
 \subsection{Circuit}
 
@@ -359,14 +401,32 @@ FIFO 的部分則是利用了上述的記憶體單位，計算出要傳給 Memor
 找出實際要發出訊號的記憶體單位是哪一個，最後再分別跟 $ren, wen$ 做 AND 運算，\
 確保是做哪個操作後，就能夠將訊號傳遞至記憶體單位。
 \par
-由於只會有一個記憶體單位有輸出值（其他都會被設定為 0），因此最後直接將 4 個記憶體單位的輸出做 Bitwise OR 就能夠得到最後的輸出。
+由於只會有一個記憶體單位有輸出值（其他都會被設定為 0），因此最後直接將 4 個記憶體單位的輸出做 Bitwise OR 就能夠得到最後的輸出。\
+如圖 \ref{fig:Q3-Bank} 所示。
+
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=\textwidth]{./img/Q3-Bank.png}
+  \caption{Q3 Bank}
+  \label{fig:Q3-Bank}
+\end{figure}
+\newpage
 
 \subsubsection*{Main Module}
 與 Bank 的實作方法類似，不過因為同一個記憶體區塊不能同時讀寫的緣故，因此 $wen$ 使用了\
-不等於的比較器，比較 $waddr, raddr$ 的前四個 bit 是否不同，若是不同則將 $wen$ 設為 $0$
+不等於的比較器，比較 $waddr, raddr$ 的前四個 bit 是否不同，若是不同則將 $wen$ 設為 $0$\
+如圖 \ref{fig:Q3-main} 所示。
 
 
-% TODO: 這裡放電路圖
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=\textwidth]{./img/Q3.png}
+  \caption{Q3 Main Module}
+  \label{fig:Q3-main}
+\end{figure}
+
+\newpage
 
 
 \section{Q4: Round-Robin FIFO Arbiter}
@@ -412,10 +472,18 @@ FIFO 的部分則是利用了上述的記憶體單位，計算出要傳給 Memor
   
 \end{itemize}
 
+\newpage
 \subsection{Circuit}
 首先介紹一個 4-bit 的 Shifter，能夠指定將輸入的數字往左位移 $shift$ 次，由四個 4-bit 4-to-1 MUX 組成。
 
-% TODO: 這裡放電路圖
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=0.6\textwidth]{./img/Q4-Shift.png}
+  \caption{Q4 Shifter}
+  \label{fig:Q4-shift}
+\end{figure}
+
+\newpage
 
 接著是整體的電路實作，基本上分為三層：
 \subsubsection*{輸入層}
@@ -433,13 +501,37 @@ FIFO 的部分則是利用了上述的記憶體單位，計算出要傳給 Memor
 但由於當 $error$ 發生的時候有可能得到 X 的輸出，因此在最後再加一個 2-to-1 MUX，\
 用 $valid$ 當作 sel bit，在發生不合法的情況時直接輸出 $0$。
 
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=\textwidth]{./img/Q4.png}
+  \caption{Q4 Circuit}
+  \label{fig:Q4}
+\end{figure}
+
+\newpage
+
 \subsection{Testbench}
 
 首先重現了題目範例中的波形圖：
 
-% TODO: 這裡放重現的波形圖
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=\textwidth]{./img/Q4-tb-ex.png}
+  \caption{Q4 Example Testbench}
+  \label{fig:Q4-tb-ex}
+\end{figure}
 
 接著再使用 random 來進行額外的模擬，並觀察是否與期望相符。
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=\textwidth]{./img/Q4-tb-wave1.png}
+  \includegraphics[width=\textwidth]{./img/Q4-tb-wave2.png}
+  \caption{Q4 Testbench Wave}
+  \label{fig:Q4-tb}
+\end{figure}
+
+\newpage
 
 \section{Q5: 4-bit Parameterized Ping-Pong Counter}
 
@@ -477,7 +569,17 @@ output 的計算會經過幾個步驟：
   \item 判斷是否需要 reset，是的話將 $direction$ 設為 $1$、$out$ 設為 $0$，否則保持以上結果
 \end{enumerate}
 
-% TODO: 放電路圖
+\newpage
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=\textwidth]{./img/Q5.png}
+  \caption{Q5 Circuit}
+  \label{fig:Q5}
+\end{figure}
+
+
+\newpage
 
 \section{FPGA: 4-bit Paramterized Ping-Pong Counter on FPGA}
 
@@ -492,7 +594,16 @@ output 的計算會經過幾個步驟：
 \end{itemize}
 
 
-我們寫了一個 Display Control 模組，用來運算 Counter 的輸入以及七段顯示器的輸出，而 Counter 則是沿用上一題的實作稍作修改。
+我們寫了一個 Display Control 模組，用來運算 Counter 的輸入以及七段顯示器的輸出，而 Counter 則是沿用上一題的實作稍作修改，加上了 $cnt\_en$ 這個訊號。
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=\textwidth]{./img/FPGA.png}
+  \caption{FPGA Counter}
+  \label{fig:FPGA}
+\end{figure}
+
+\newpage
 
 \subsection{debounce}
 \subsubsection*{Implement}
@@ -504,7 +615,14 @@ output 的計算會經過幾個步驟：
 這樣的做法可以確保訊號真實穩定經過了 4 個 clock cycle 以上。
 
 \subsubsection*{Circuit}
-% TODO: 這裡放電路圖
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=\textwidth]{./img/Q5-Debounce.png}
+  \caption{Debounce}
+  \label{fig:debounce}
+\end{figure}
+
+\newpage
 
 \subsection{One Pulse}
 \subsubsection*{Implement}
@@ -514,11 +632,24 @@ output 的計算會經過幾個步驟：
 首先，利用 D-flip-flop 使得訊號延遲一單位，並將其反相。接著將其與原本的訊號做 AND 運算，\
 就會產生一個只有一個 clock cycle 兩個都是 True 的訊號，最後再將其導向一個 D-Flip-Flop，\
 最後的輸出就會是一個只有一個 clock cycle 是 True 的訊號，如下圖。
-% TODO: 這裡放範例波形
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=0.5\textwidth]{./img/Q5-One-pulse-wave.png}
+  \caption{One Pulse wave}
+  \label{fig:one-pulse-wave}
+\end{figure}
 
 
 \subsubsection*{Circuit}
-% TODO: 這邊放電路圖
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=\textwidth]{./img/Q5-One-pulse.png}
+  \caption{One Pulse Circuit}
+  \label{fig:one-pulse}
+\end{figure}
+
+\newpage
 
 \subsection{Display Control}
 由於 FPGA 上的頻率為 100MHZ，對於某些計算來說太快了，因此這邊先定義了一個 32-bit 的整數：$counter$，\

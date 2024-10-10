@@ -81,6 +81,15 @@ initial begin
     c = x;
     d = x;
     #(5*t);
+
+    repeat(100) begin
+        wen = $random;
+        a = $random;
+        b = $random;
+        c = $random;
+        d = $random;
+        #(2*t);
+    end
     $finish;
 end
 
