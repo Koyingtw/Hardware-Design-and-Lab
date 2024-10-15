@@ -15,7 +15,7 @@ always @(posedge clk) begin
     if (!rst_n) begin
         started <= 1;
         direction <= 1;
-        out <= 0;
+        out <= min;
     end 
     else if (flip && out > min && out < max) begin
         direction <= ~direction;

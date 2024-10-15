@@ -9,38 +9,32 @@ output [8-1:0] dout;
 output reg error;
 
 wire [3-1:0] addr;
-wire [7:0] memout;
 reg [3-1:0] waddr, raddr;
 assign addr = (ren) ? raddr : waddr;
-reg started = 0;
 reg [3:0] count;
-
+assign next_error = (count == 0 && ren) || (count == 8 && !ren && wen);
 // reg [8-1:0] mem [0:7];
-Memory_8 mem(clk, 
-ren & (~((started && (count == 0 && ren)) || (started && (count == 8 && !ren && wen)))), 
-wen & (~((started && (count == 0 && ren)) || (started && (count == 8 && !ren && wen)))), 
-addr, din, memout);
-
-assign dout = rst_n ? memout : 0;
+Memory_8 mem(clk, rst_n, ren & (~next_error), wen & (~next_error) & (!ren), addr, din, dout);
 
 always @(posedge clk) begin
     if (!rst_n) begin
         waddr <= 0;
         raddr <= 0;
         count <= 0;
-        started <= 1;
         error <= 0;
     end 
-    else if (started) begin     
-        error <= (started && (count == 0 && ren)) || (started && (count == 8 && !ren && wen)); 
-        if (!((started && (count == 0 && ren)) || (started && (count == 8 && !ren && wen)))) begin
+    else begin     
+        error <= next_error;
+        if (!next_error) begin
             if (ren) begin
-                raddr <= raddr + 1;
-                count <= count - 1;
+                raddr <= raddr + 1'b1;
+                count <= count - 1'b1;
+                waddr <= waddr;
             end
             else if (wen) begin
-                count <= count + 1;
-                waddr <= waddr + 1;
+                count <= count + 1'b1;
+                raddr <= raddr;
+                waddr <= waddr + 1'b1;
             end
             else begin
                 count <= count;
@@ -53,8 +47,8 @@ end
 
 endmodule
 
-module Memory_8 (clk, ren, wen, addr, din, dout);
-input clk;
+module Memory_8 (clk, rst_n, ren, wen, addr, din, dout);
+input clk, rst_n;
 input ren, wen;
 input [3-1:0] addr;
 input [8-1:0] din;
@@ -73,7 +67,6 @@ always @(posedge clk) begin
     else begin
         dout <= 0;
     end
-
 end
 
 endmodule

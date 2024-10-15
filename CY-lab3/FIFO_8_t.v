@@ -5,12 +5,13 @@ reg clk;
 reg rst_n;
 reg wen, ren;
 reg [8-1:0] din;
-wire [8-1:0] dout;
-wire error;
+wire [8-1:0] dout, dout_right;
+wire error, error_right;
 
 reg started = 0;
 
 FIFO_8 FIFO_8(clk, rst_n, wen, ren, din, dout, error);
+FIFO_8_right FIFO_8_right(clk, rst_n, wen, ren, din, dout_right, error_right);
 
 always begin
     #5 clk = ~clk;
@@ -25,6 +26,23 @@ end
 reg [3:0] count = 0;
 
 always @(posedge clk) begin
+    // #5;
+    if (error != error_right) begin
+        $display("Error: error != error_right");
+        #10;
+        $finish;
+    end
+    if (!error && (dout != dout_right) && (ren)) begin
+        $display("Error: dout != dout_right");
+        $display("dout = %d, dout_right = %d", dout, dout_right);
+        $display("error = %d, error_right = %d", error, error_right);
+        $display("ren = %d, wen = %d, din = %d", ren, wen, din);
+        #20;
+        $finish;
+    end
+end
+
+always @(posedge clk) begin
     if (rst_n == 0) begin
         started <= 1;
     end    
@@ -33,6 +51,7 @@ always @(posedge clk) begin
     // display time
     
     $display("%t: count = %d", $time, count);
+    $display("ren = %d, wen = %d, din = %d, dout = %d, dout_right = %d, error = %d", ren, wen, din, dout, dout_right, error);
 
     if (started) begin
         if (ren) begin
@@ -71,13 +90,93 @@ initial begin
     din = 0;
     started = 0;
     #20
-    repeat (2**10) begin
+    repeat (2**4) begin
         #10;
         wen = {$random} % 2;
         ren = {$random} % 2;
         din = {$random} % 256;
 
     end
+
+    ren = 0;
+    repeat (2**5) begin
+        #10;
+        wen = {$random} % 2;
+        // ren = {$random} % 2;
+        din = {$random} % 256;
+    end
+
+    wen = 0;
+    repeat (2**5) begin
+        #10;
+        // wen = {$random} % 2;
+        ren = {$random} % 2;
+        din = {$random} % 256;
+    end
+
+    rst_n = 0;
+
+    #20 rst_n = 1;
+
+    repeat(10) begin
+        ren = 0;
+        repeat (7) begin
+            #10;
+            wen = 1;
+            din = {$random} % 256;
+        end
+
+        wen = 0;
+        repeat (7) begin
+            #10;
+            ren = 1;
+        end
+
+        ren = 0;
+
+        repeat (10) begin
+            #10;
+            wen = 1;
+            din = {$random} % 256;
+        end
+
+        wen = 0;
+        repeat (10) begin
+            #10;
+            ren = 1;
+        end
+    end
+
+    repeat(10000) begin
+        ren = 0;
+        repeat ({$random} % 10) begin
+            #10;
+            wen = 1;
+            din = {$random} % 256;
+        end
+
+        wen = 0;
+        repeat ({$random} % 10) begin
+            #10;
+            ren = 1;
+        end
+
+        ren = 0;
+
+        repeat (10) begin
+            #10;
+            wen = 1;
+            din = {$random} % 256;
+        end
+
+        wen = 0;
+        repeat (10) begin
+            #10;
+            ren = 1;
+        end
+    end
+
+
     $display("Well done");
     $finish;
 end
