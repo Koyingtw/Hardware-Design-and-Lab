@@ -12,6 +12,7 @@ reg [7:0] mem[15:0];
 reg started = 0;
 reg [15:0] enable;
 
+assign next_hit = (h != 16'd0);
 wire [15:0] h;
 Comparator_Array CA0(din, enable[0], mem[0], h[0]);
 Comparator_Array CA1(din, enable[1], mem[1], h[1]);
@@ -37,14 +38,13 @@ always @(posedge clk) begin
     if(!started) begin
         started <= 1;
         enable <= 16'd0;
-        hit <= 0;
+        dout <= 4'd0;
+        hit <= 1'd0;
     end
     if(ren) begin
-        if(enable) begin
+        if(next_hit) begin
             dout <= out;
-            hit <= (h == 15'd0) ? 1'd0 : 1'd1;
-            mem[out] <= (h == 15'd0) ? mem[out] : 1'd0;
-            enable[out] <= (h == 15'd0) ? enable[out] : 1'd0;
+            hit <= 1'd1;
         end
         else begin
             dout <= 4'd0;
