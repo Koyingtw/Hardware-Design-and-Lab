@@ -44,7 +44,7 @@ always @(posedge clk) begin
         end
     end
     else begin
-        if(!ren && wen) begin
+        if(wen) begin
             mem[addr] <= din;
         end
         dout <= 4'd0;
