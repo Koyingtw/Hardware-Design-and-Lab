@@ -1,5 +1,5 @@
 .DS_Store
-
+*.vcd
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof

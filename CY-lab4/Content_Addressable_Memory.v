@@ -9,9 +9,9 @@ output reg [3:0] dout;
 output reg hit;
 
 reg [7:0] mem[15:0];
+wire [15:0] h;
 
 assign next_hit = (h != 16'd0);
-wire [15:0] h;
 Comparator_Array CA0(din, mem[0], h[0]);
 Comparator_Array CA1(din, mem[1], h[1]);
 Comparator_Array CA2(din, mem[2], h[2]);
