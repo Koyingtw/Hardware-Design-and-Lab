@@ -34,12 +34,6 @@ SDFF sdff1(clk, rst_n, b[2], scan_en, p[1], b[1]);
 SDFF sdff0(clk, rst_n, b[1], scan_en, p[0], b[0]);
 assign p = a * b;
 
-
-always @(posedge clk) begin
-    $display("%d %d %d", a, b, p);
-end
-
-
 endmodule
 
 module SDFF(clk, rst_n, scan_in, scan_en, data, out);

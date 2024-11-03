@@ -167,6 +167,20 @@ LFSR 會透過狀態內數值的互相 XOR，達到產生新隨機值的效果�
 
 這兩種架構都有一個共通點，就是一開始的種子不能全為 0，否則就會因為 $0 \oplus 0 = 0$ 的特性，導致輸出值永遠都不會改變。
 
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./img/Lab4-LFSR.png}
+  \caption{Many-to-one first ten states after reset}
+  \label{fig:LFSR-1}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./img/Lab4-LFSR-2.png}
+  \caption{One-to-many first ten states after reset}
+  \label{fig:LFSR-2}
+\end{figure}
+
 \section{Q1: Content-addressable memory (CAM)}
 
 \begin{itemize}

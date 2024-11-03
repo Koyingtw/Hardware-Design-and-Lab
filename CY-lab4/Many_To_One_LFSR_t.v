@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-
+`include "Lab4_Many_To_One_LFSR.v"
 module Many_To_One_LFSR_t;
 reg clk = 0;
 reg rst_n = 1;
@@ -24,6 +24,8 @@ Many_To_One_LFSR m21lfsr(
 // end
 
 initial begin
+    $dumpfile("Many_To_One_LFSR.vcd");
+    $dumpvars(0, Many_To_One_LFSR_t);
     @(negedge clk)
     rst_n = 1'b0;
     @(negedge clk)
