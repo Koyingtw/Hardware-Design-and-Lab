@@ -54,17 +54,24 @@ always @(posedge clk) begin
             CAL: begin
                 if (count == 3'd3) begin
                     state <= FINISH;
-                    p <= acc;
+                    // p <= acc;
                     finish_count <= 2'b0;
+                    case ({multiplier[0], q_1})
+                        2'b01: begin
+                            p <= (acc + {{4{multiplicand[3]}}, multiplicand});
+                        end
+                        2'b10: begin
+                            p <= (acc - {{4{multiplicand[3]}}, multiplicand});
+                        end 
+                        default: p <= acc; // 2'b00 或 2'b11
+                    endcase
                 end
                 else begin
                     case ({multiplier[0], q_1})
                         2'b01: begin
-                            $display("acc=%d + %d", acc, {{4{multiplicand[3]}}, multiplicand});
                             acc <= (acc + {{4{multiplicand[3]}}, multiplicand});
                         end
                         2'b10: begin
-                            $display("acc=%d - %d", acc, {{4{multiplicand[3]}}, multiplicand});
                             acc <= (acc - {{4{multiplicand[3]}}, multiplicand});
                         end 
                         default: acc <= acc; // 2'b00 或 2'b11
@@ -83,6 +90,7 @@ always @(posedge clk) begin
                 if (finish_count == 2'd1) begin
                     state <= WAIT;
                     finish_count <= 2'b0;
+                    p <= 8'b0;
                 end
                 else begin
                     finish_count <= finish_count + 1'b1;

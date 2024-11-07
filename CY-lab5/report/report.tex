@@ -173,7 +173,7 @@
   \item S2: 偵測到 11 的狀態
   \item S3: 偵測到 111 的狀態，因此接受到 1 之後，還是代表前面有 111，因此會繼續保持 S3。
   \item S4: 偵測到 1110 這個狀態，因此接收到 1 之後，會回到只接收 1 的狀態，也就是 S1
-  \item S5: 偵測到 11100 的狀態，由於下一個狀態需要輸入 1 才會達到，因此當輸入 0 的時候就必須回到 S0 的狀態
+  \item S5: 偵測到 11100 的狀態，由於下一個狀態 S6 需要輸入 1 才會達到，因此當輸入 0 的時候就必須回到 S0 的狀態
   \item S6: 偵測到 111001 的狀態，由於 (01) 可以多次出現，因此輸入為 0 的時候，可以回到 S5 重新偵測 (01)。
   \item S7: 偵測到 1110(01)+1 的狀態，如果輸入為 1，就代表符合 regular expression，\
             但因為這個 detector 是 Sliding Window 的，不會因為偵測到符合的 sequence 就直接重設，\
@@ -202,7 +202,8 @@
 
 這題需要我們實作一個紅綠燈的控制器，控制一個由 Highway 和 Local road 兩條道路所組成的交叉路口的紅綠燈。
 \par
-由於 Highway 的優先度最高，因此這個流程分為六個狀態：
+由於 Highway 的優先度最高，因此這個流程分為六個狀態（三種顏色在程式碼中以二進位表示，Green: 100, \
+Yellow: 010, Red: 001）：
 \begin{enumerate}
   \item HW = Green, LR = Red: 如果已經保持這個狀態 $\ge 70$ 個 cycle 以上，且 Local road 有車，\
         那就進到下一個狀態。
@@ -220,6 +221,9 @@
 跟前一題的實作方法相似，使用 switch case 由目前經過的 clock cycle 以及狀態來決定下一個狀態是什麼。
 
 % TODO: 放電路圖
+
+\subsection{Simulation}
+我們重現了題目上的波形圖：
 
 \section{Q3: Greatest common divisor}
 \begin{itemize}
@@ -275,10 +279,62 @@ fast 值就會做一次 not 反轉，下圖是這部分的電路圖：
 下圖展現的是相關參數的連接方式：
 % TODO: 音訊控制模組
 
-\subsubsection*{title}
 
 \section{FPGA2: vending maching}
+這題要在 FPGA 上實作一個自動販賣機，有三種商品：
+\begin{itemize}
+  \item Coffee: 80 元
+  \item Coke: 30 元
+  \item Oolong: 25 元
+  \item Tea: 20 元
+\end{itemize}
 
+並且有這幾種面值的硬幣，分別對應到板子上的左中右按鈕：
+\begin{itemize}
+  \item Left: 5 元
+  \item Center: 10 元
+  \item Right: 50 元
+\end{itemize}
+
+並且將板子上的 Top Button 作為 reset 訊號、將 Bottom  Button 作為取消訊號。
+
+\subsection{Implementation}
+首先將輸入的按鈕訊號進行 debounce 與 onepulse 處理：
+% TODO: debounce, onepulse 電路圖
+接著透過判斷鍵盤輸入的 A, S, D, F，來決定 buy 的訊號：
+% TODO: buy 電路圖
+接著將以上參數輸入至 VendingMachine Module 中，並定義這些變數：
+\begin{itemize}
+  \item enable[3:0]: 代表每個商品是否可以購買，透過判斷是否有足夠的錢，以及目前不在 cancel 狀態中來判定。
+  \item buying: 透過將四個 buy 訊號做 or 運算，來判定是否正在購買。
+\end{itemize}
+% TODO: 放 enable, buying 電路圖
+接著利用這些變數，實作自動販賣機的 state machine：
+% TODO: 放 state machine 電路圖
+最後，將 VendingMachine 的輸出接到 NumberDevide 中，計算出三個數字分別要顯示什麼：
+% TODO: 放 NumberDevide 電路圖
+最後再將這些訊號接到七段顯示器的輸出控制模組中，就完成了這題的實作。
+% TODO: 放七段顯示器的輸出控制模組
+
+\section{Other}
+
+\subsection{What we have learned}
+\begin{itemize}
+  \item 這次實作了更多 Finite State Machine，透過多次實作讓我們學習到並建構出一個撰寫 FSM 的 Pattern。\
+        使得這次的實作過程比上次都還要順利不少。
+  \item 在研究 Booth Multiplier 的過程中，我了解到，其實這個演算法就只是將我們平常加速乘法運算的手法，\
+        只是轉成二進位的形式而已。雖然網路上的程式碼沒有理解得很清楚，但因為已經了解概念了，所以還是可以自己寫出來。
+  \item 了解到如何在 FPGA 上連接鍵盤，並稍微了解了一下 FPGA 上要怎麼操作 USB 的相關協定，\
+        這將對我們 Final Project 的實現方式有很大的幫助。
+  \item 實際使用了一些小的音訊裝置組成一個蜂鳴器，比起直接接喇叭，這樣的方式讓我們更認識了喇叭裡面的工作原理，\
+        也發現到了，當可變電阻接電過長，有可能因為過熱而導致 FPGA 直接關機。
+\end{itemize}
+
+\subsection{分工}
+\begin{itemize}
+  \item 陳克盈：Q3, Q4, FPGA1, FPGA2
+  \item 蔡明妡：Q1, Q2
+\end{itemize}
 
 \end{document}
 

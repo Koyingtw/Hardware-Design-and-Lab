@@ -1,5 +1,5 @@
 `timescale 1ps/1ps
-`include "GCD.v"
+// `include "GCD.v"
 
 
 module gcd_t();
@@ -8,12 +8,12 @@ reg [15:0] inputa, inputb, nowa, nowb;
 wire [15:0] gcd;
 wire done;
 
-gcd gcd_inst (
+Greatest_Common_Divisor gcd_inst (
     .clk(clk),
     .rst_n(rst_n),
     .start(start),
-    .inputa(inputa),
-    .inputb(inputb),
+    .a(inputa),
+    .b(inputb),
     .gcd(gcd),
     .done(done)
 );
@@ -24,8 +24,8 @@ initial begin
 end
 
 initial begin
-    $dumpfile("gcd_t.vcd");
-    $dumpvars(0, gcd_t);
+    // $dumpfile("gcd_t.vcd");
+    // $dumpvars(0, gcd_t);
     rst_n = 1;
     start = 0;
     inputa = 0;
