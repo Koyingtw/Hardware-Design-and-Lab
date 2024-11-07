@@ -1,19 +1,20 @@
 `timescale 1ps/1ps
 
-module gcd(clk, rst_n, start, inputa, inputb, gcd, done);
-input clk, rst_n, start;
-input [15:0] inputa, inputb; 
-
-output reg [15:0] gcd;
+module Greatest_Common_Divisor (clk, rst_n, start, a, b, done, gcd);
+input clk, rst_n;
+input start;
+input [15:0] a;
+input [15:0] b;
 output reg done;
+output reg [15:0] gcd;
 
-localparam WAIT   = 2'b00;
-localparam CAL    = 2'b01;
-localparam FINISH = 2'b10;
+parameter WAIT = 2'b00;
+parameter CAL = 2'b01;
+parameter FINISH = 2'b10;
 
-reg [1:0] state, next_state;
-reg [15:0] a, b;
-reg [1:0] counter;
+reg [1:0] state;
+reg [15:0] inputa, inputb;
+reg counter;
 
 
 always @(posedge clk) begin
@@ -22,7 +23,6 @@ always @(posedge clk) begin
         gcd <= 16'd0;
         done <= 1'b0;
         state <= 2'b00;
-        next_state <= 2'b00;
         counter <= 2'b00;
     end
     else begin
@@ -31,25 +31,23 @@ always @(posedge clk) begin
                 if (start) begin
                     state <= CAL;
                 end
-                a <= inputa;
-                b <= inputb;
                 counter <= 2'd0;
                 gcd <= 16'd0;
                 done <= 1'b0;
             end
             CAL: begin
-                if (a == 0 || b == 0) begin
+                if (inputa == 0 || inputb == 0) begin
                     state <= FINISH;
-                    gcd <= a | b;
+                    gcd <= inputa | inputb;
                     done <= 1'b1;
                 end
                 else begin
                     state <= CAL;
-                    if (a > b) begin
-                        a <= a - b;
+                    if (inputa > inputb) begin
+                        inputa <= inputa - inputb;
                     end
                     else
-                        b <= b - a;
+                        inputb <= inputb - inputa;
                     gcd <= 0;
                     done <= 0;
                     counter <= 2'd0;
@@ -69,6 +67,14 @@ always @(posedge clk) begin
             end
         endcase
 
+    end
+    if (start && state != CAL) begin
+        inputa <= a;
+        inputb <= b;
+    end
+    else if (state != CAL) begin
+        inputa <= inputa;
+        inputb <= inputb;
     end
 end
 

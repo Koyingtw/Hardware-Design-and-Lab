@@ -18,8 +18,8 @@ assign pmod_2 = 1'd1;	//no gain(6dB)
 assign pmod_4 = 1'd1;	//turn-on
 	
 reg [31:0] counter;
-reg [2:0] tone = 0;
-reg [3:0] height = 4;
+reg [2:0] tone;
+reg [3:0] height;
 reg fast;
 reg direction;
 
@@ -60,43 +60,47 @@ always @(posedge clk) begin
 	else if (been_ready && key_down[KEY_CODES_R]) begin
 		fast = ~fast;
 	end
-	counter <= counter + 1;
-	if (counter == 32'd100_000_000 || (counter == 32'd50_000_000 && fast)) begin
-		counter <= 0;
-		if (direction) begin
-			if (tone == 3'd6) begin
-				if (height == 4'd8) begin
-					height <= height;
-					tone <= tone;
+	if (!key_down[KEY_CODES_ENTER]) begin
+		if (counter == 32'd100_000_000 || (counter == 32'd50_000_000 && fast)) begin
+			counter <= 0;
+			if (direction) begin
+				if (tone == 3'd6) begin
+					if (height == 4'd8) begin
+						height <= height;
+						tone <= tone;
+					end
+					else begin
+						tone <= 0;
+						height <= height + 1;
+					end
 				end
 				else begin
-					tone <= 0;
-					height <= height + 1;
+					if (height != 4'd8)
+						tone <= tone + 1;
+					else
+						tone <= tone;
+					height <= height;
 				end
 			end
 			else begin
-				if (height != 4'd8)
-					tone <= tone + 1;
-				else
-					tone <= tone;
-				height <= height;
+				if (tone == 3'd0) begin
+					if (height == 4'd4) begin
+						height <= height;
+						tone <= tone;
+					end
+					else begin
+						tone <= 3'd6;
+						height <= height - 1;
+					end
+				end
+				else begin
+					tone <= tone - 1;
+					height <= height;
+				end
 			end
 		end
 		else begin
-			if (tone == 3'd0) begin
-				if (height == 4'd4) begin
-					height <= height;
-					tone <= tone;
-				end
-				else begin
-					tone <= 3'd6;
-					height <= height - 1;
-				end
-			end
-			else begin
-				tone <= tone - 1;
-				height <= height;
-			end
+			counter <= counter + 1;
 		end
 	end
 end
@@ -127,80 +131,221 @@ module Decoder (
 always @(*) begin
 	case (tone)
 		3'b000: begin // Do
-			if (height >= 4'd4) begin
-				freq = 32'd262 << (height - 4'd4);
-			end
-			else begin
-				freq = 32'd262 >> (4'd4 - height);
-			end
-		end 
+			freq = 32'd262 << (height - 4'd4);
+		end
 		3'b001: begin // Re
-			if (height >= 4'd4) begin
-				freq = 32'd294 << (height - 4'd4);
-			end
-			else begin
-				freq = 32'd294 >> (4'd4 - height);
-			end
+			freq = 32'd294 << (height - 4'd4);
 		end
 		3'b010: begin // Mi
-			if (height >= 4'd4) begin
-				freq = 32'd330 << (height - 4'd4);
-			end
-			else begin
-				freq = 32'd330 >> (4'd4 - height);
-			end
+			freq = 32'd330 << (height - 4'd4);
 		end
 		3'b011: begin // Fa
-			if (height >= 4'd4) begin
-				freq = 32'd349 << (height - 4'd4);
-			end
-			else begin
-				freq = 32'd349 >> (4'd4 - height);
-			end
+			freq = 32'd349 << (height - 4'd4);
 		end
 		3'b100: begin // Sol
-			if (height >= 4'd4) begin
-				freq = 32'd392 << (height - 4'd4);
-			end
-			else begin
-				freq = 32'd392 >> (4'd4 - height);
-			end
+			freq = 32'd392 << (height - 4'd4);
 		end
 		3'b101: begin // La
-			if (height >= 4'd4) begin
-				freq = 32'd440 << (height - 4'd4);
-			end
-			else begin
-				freq = 32'd440 >> (4'd4 - height);
-			end
+			freq = 32'd440 << (height - 4'd4);
 		end
 		3'b110: begin // Si
-			if (height >= 4'd4) begin
-				freq = 32'd494 << (height - 4'd4);
-			end
-			else begin
-				freq = 32'd494 >> (4'd4 - height);
-			end
+			freq = 32'd494 << (height - 4'd4);
 		end
 		default : freq = 32'd20000;	//Do-dummy
-		// 16'b0000_0000_0000_0001: freq = 32'd262;	//Do-m
-		// 16'b0000_0000_0000_0010: freq = 32'd294;	//Re-m
-		// 16'b0000_0000_0000_0100: freq = 32'd330;	//Mi-m
-		// 16'b0000_0000_0000_1000: freq = 32'd349;	//Fa-m
-		// 16'b0000_0000_0001_0000: freq = 32'd392;	//Sol-m
-		// 16'b0000_0000_0010_0000: freq = 32'd440;	//La-m
-		// 16'b0000_0000_0100_0000: freq = 32'd494;	//Si-m
-		// 16'b0000_0000_1000_0000: freq = 32'd262 << 1;	//Do-h
-		// 16'b0000_0001_0000_0000: freq = 32'd294 << 1;
-		// 16'b0000_0010_0000_0000: freq = 32'd330 << 1;
-		// 16'b0000_0100_0000_0000: freq = 32'd349 << 1;
-		// 16'b0000_1000_0000_0000: freq = 32'd392 << 1;
-		// 16'b0001_0000_0000_0000: freq = 32'd440 << 1;
-		// 16'b0010_0000_0000_0000: freq = 32'd494 << 1;
-		// 16'b0100_0000_0000_0000: freq = 32'd262 << 2;
-		// 16'b1000_0000_0000_0000: freq = 32'd294 << 2;
-		// default : freq = 32'd20000;	//Do-dummy
 	endcase
 end
 
 endmodule
+
+module KeyboardDecoder(
+    output reg [511:0] key_down,
+    output wire [8:0] last_change,
+    output reg key_valid,
+    inout wire PS2_DATA,
+    inout wire PS2_CLK,
+    input wire rst,
+    input wire clk
+    );
+    
+    parameter [1:0] INIT			= 2'b00;
+    parameter [1:0] WAIT_FOR_SIGNAL = 2'b01;
+    parameter [1:0] GET_SIGNAL_DOWN = 2'b10;
+    parameter [1:0] WAIT_RELEASE    = 2'b11;
+    
+    parameter [7:0] IS_INIT			= 8'hAA;
+    parameter [7:0] IS_EXTEND		= 8'hE0;
+    parameter [7:0] IS_BREAK		= 8'hF0;
+    
+    reg [9:0] key, next_key;		// key = {been_extend, been_break, key_in}
+    reg [1:0] state, next_state;
+    reg been_ready, been_extend, been_break;
+    reg next_been_ready, next_been_extend, next_been_break;
+    
+    wire [7:0] key_in;
+    wire is_extend;
+    wire is_break;
+    wire valid;
+    wire err;
+    
+    wire [511:0] key_decode = 1 << last_change;
+    assign last_change = {key[9], key[7:0]};
+    
+    KeyboardCtrl_0 inst (
+        .key_in(key_in),
+        .is_extend(is_extend),
+        .is_break(is_break),
+        .valid(valid),
+        .err(err),
+        .PS2_DATA(PS2_DATA),
+        .PS2_CLK(PS2_CLK),
+        .rst(rst),
+        .clk(clk)
+    );
+    
+    OnePulse op (
+        .signal_single_pulse(pulse_been_ready),
+        .signal(been_ready),
+        .clock(clk)
+    );
+    
+    always @ (posedge clk, posedge rst) begin
+        if (rst) begin
+            state <= INIT;
+            been_ready  <= 1'b0;
+            been_extend <= 1'b0;
+            been_break  <= 1'b0;
+            key <= 10'b0_0_0000_0000;
+        end else begin
+            state <= next_state;
+            been_ready  <= next_been_ready;
+            been_extend <= next_been_extend;
+            been_break  <= next_been_break;
+            key <= next_key;
+        end
+    end
+    
+    always @ (*) begin
+        case (state)
+            INIT:            next_state = (key_in == IS_INIT) ? WAIT_FOR_SIGNAL : INIT;
+            WAIT_FOR_SIGNAL: next_state = (valid == 1'b0) ? WAIT_FOR_SIGNAL : GET_SIGNAL_DOWN;
+            GET_SIGNAL_DOWN: next_state = WAIT_RELEASE;
+            WAIT_RELEASE:    next_state = (valid == 1'b1) ? WAIT_RELEASE : WAIT_FOR_SIGNAL;
+            default:         next_state = INIT;
+        endcase
+    end
+    always @ (*) begin
+        next_been_ready = been_ready;
+        case (state)
+            INIT:            next_been_ready = (key_in == IS_INIT) ? 1'b0 : next_been_ready;
+            WAIT_FOR_SIGNAL: next_been_ready = (valid == 1'b0) ? 1'b0 : next_been_ready;
+            GET_SIGNAL_DOWN: next_been_ready = 1'b1;
+            WAIT_RELEASE:    next_been_ready = next_been_ready;
+            default:         next_been_ready = 1'b0;
+        endcase
+    end
+    always @ (*) begin
+        next_been_extend = (is_extend) ? 1'b1 : been_extend;
+        case (state)
+            INIT:            next_been_extend = (key_in == IS_INIT) ? 1'b0 : next_been_extend;
+            WAIT_FOR_SIGNAL: next_been_extend = next_been_extend;
+            GET_SIGNAL_DOWN: next_been_extend = next_been_extend;
+            WAIT_RELEASE:    next_been_extend = (valid == 1'b1) ? next_been_extend : 1'b0;
+            default:         next_been_extend = 1'b0;
+        endcase
+    end
+    always @ (*) begin
+        next_been_break = (is_break) ? 1'b1 : been_break;
+        case (state)
+            INIT:            next_been_break = (key_in == IS_INIT) ? 1'b0 : next_been_break;
+            WAIT_FOR_SIGNAL: next_been_break = next_been_break;
+            GET_SIGNAL_DOWN: next_been_break = next_been_break;
+            WAIT_RELEASE:    next_been_break = (valid == 1'b1) ? next_been_break : 1'b0;
+            default:         next_been_break = 1'b0;
+        endcase
+    end
+    always @ (*) begin
+        next_key = key;
+        case (state)
+            INIT:            next_key = (key_in == IS_INIT) ? 10'b0_0_0000_0000 : next_key;
+            WAIT_FOR_SIGNAL: next_key = next_key;
+            GET_SIGNAL_DOWN: next_key = {been_extend, been_break, key_in};
+            WAIT_RELEASE:    next_key = next_key;
+            default:         next_key = 10'b0_0_0000_0000;
+        endcase
+    end
+
+    always @ (posedge clk, posedge rst) begin
+        if (rst) begin
+            key_valid <= 1'b0;
+            key_down <= 511'b0;
+        end else if (key_decode[last_change] && pulse_been_ready) begin
+            key_valid <= 1'b1;
+            if (key[8] == 0) begin
+                key_down <= key_down | key_decode;
+            end else begin
+                key_down <= key_down & (~key_decode);
+            end
+        end else begin
+            key_valid <= 1'b0;
+            key_down <= key_down;
+        end
+    end
+
+endmodule
+
+module OnePulse (
+    output reg signal_single_pulse,
+    input wire signal,
+    input wire clock
+    );
+    
+    reg signal_delay;
+
+    always @(posedge clock) begin
+        if (signal == 1'b1 & signal_delay == 1'b0)
+            signal_single_pulse <= 1'b1;
+        else
+            signal_single_pulse <= 1'b0;
+        signal_delay <= signal;
+    end
+endmodule
+
+//////////////////////////////////////////////////////////////////////////////////
+// Module Name: PWM_gen
+// Description: This IP expects 100 MHz input clock and generates the desired output
+// 				at PWM output with the configurable frequency (in Hz) and duty cycle.
+// 				
+//				The configurable frequency should be less or equal to 100 MHz and 
+//				the duty cycle can vary in step of 1/1024, i.e. 0.0009765625 or 
+//				approximately 0.1% 
+//////////////////////////////////////////////////////////////////////////////////
+module PWM_gen (
+    input wire clk,
+    input wire reset,
+	input [31:0] freq,
+    input [9:0] duty,
+    output reg PWM
+);
+
+wire [31:0] count_max = 100_000_000 / freq;
+wire [31:0] count_duty = count_max * duty / 1024;
+reg [31:0] count;
+    
+always @(posedge clk, posedge reset) begin
+    if (reset) begin
+        count <= 0;
+        PWM <= 0;
+    end else if (count < count_max) begin
+        count <= count + 1;
+		if(count < count_duty)
+            PWM <= 1;
+        else
+            PWM <= 0;
+    end else begin
+        count <= 0;
+        PWM <= 0;
+    end
+end
+
+endmodule
+

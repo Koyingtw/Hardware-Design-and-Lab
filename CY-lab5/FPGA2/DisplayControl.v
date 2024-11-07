@@ -109,6 +109,7 @@ always @(posedge clk) begin
     if (!rst_n) begin
         money <= 0;
         canceling <= 0;
+        counter <= 0;
     end
     else if (buying) begin
         if (buy[0] && enable[0]) begin
@@ -123,6 +124,7 @@ always @(posedge clk) begin
         else if (buy[3] && enable[3]) begin
             money <= money - 80;
         end
+        canceling <= 1;
     end
     else if (!canceling) begin
         if (Left) begin

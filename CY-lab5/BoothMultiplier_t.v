@@ -13,7 +13,7 @@ reg signed [3:0] b;
 wire signed [7:0] p;
 
 // 實例化被測試模組
-booth_multiplier booth_inst (
+Booth_Multiplier_4bit (
     .clk(clk),
     .rst_n(rst_n),
     .start(start),

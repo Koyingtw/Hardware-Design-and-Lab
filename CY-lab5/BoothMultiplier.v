@@ -1,13 +1,11 @@
 `timescale 1ps/1ps
 
-module booth_multiplier(
-    input wire clk,
-    input wire rst_n,
-    input wire start,
-    input wire signed [3:0] a,
-    input wire signed [3:0] b,
-    output reg signed [7:0] p
-);
+module Booth_Multiplier_4bit(clk, rst_n, start, a, b, p);
+input clk;
+input rst_n; 
+input start;
+input signed [3:0] a, b;
+output reg signed [7:0] p;
 
 // 狀態定義
 localparam WAIT   = 2'b00;
