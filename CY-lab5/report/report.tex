@@ -180,15 +180,46 @@
             因此輸入 1 之後會再回到 S3。
 \end{itemize}
 
+\newpage
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.6\textwidth]{./img/Q1-state.png}
+  \caption{Q1 State diagram}
+  \label{fig:Q1-state}
+\end{figure}
+
 \subsection{Implementation}
 首先是狀態偵測的部分，我們使用 switch case 的語法，針對目前的狀態以及輸入的值，來決定下一個狀態。\
 另外，因為這是一個 Mealy maching，dec 的值是不受 clock 影響的，因此 dec 是額外計算的，只要當前狀態是 S7，\
 且輸入是 1，就會馬上輸出 True。
 
-% TODO: 這裡放電路圖
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.6\textwidth]{./img/Q1.png}
+  \caption{Q1 Circuit}
+  \label{fig:Q1-circuit}
+\end{figure}
+
+\newpage
 
 \subsection{Simulation}
 我們重現了題目上的波形圖，可以發現當輸入的序列符合 regular expression 的時候，dec 會變成 1。
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./img/Q1-match.png}
+  \caption{Q1 Waveform match}
+  \label{fig:Q1-match}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./img/Q1-dismatch.png}
+  \caption{Q1 Waveform dismatch}
+  \label{fig:Q1-dismatch}
+\end{figure}
+
 
 \section{Q2: Traffic light controller}
 
@@ -215,15 +246,56 @@ Yellow: 010, Red: 001）：
 \end{enumerate}
 
 \subsection{State diagram}
-% TODO: 放狀態圖
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.6\textwidth]{./img/Q2-state.png}
+  \caption{Q2 State diagram}
+  \label{fig:Q2-state}
+\end{figure}
 
 \subsection{Implementation}
 跟前一題的實作方法相似，使用 switch case 由目前經過的 clock cycle 以及狀態來決定下一個狀態是什麼。
+\par
+首先是紅綠燈的判定：
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.5\textwidth]{./img/Q2-hwlr.png}
+  \caption{Q2 Light Circuit}
+  \label{fig:Q2-light}
+\end{figure}
 
-% TODO: 放電路圖
+\newpage
+
+接著是狀態的判定：
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.7\textwidth]{./img/Q2-state-circuit.png}
+  \caption{Q2 Circuit}
+  \label{fig:Q2-circuit}
+\end{figure}
+
+\newpage
+
+然後是計數器的判定：
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./img/Q2-cnt-circuit.png}
+  \caption{Q2 Counter Circuit}
+  \label{fig:Q2-counter}
+\end{figure}
+\newpage
 
 \subsection{Simulation}
 我們重現了題目上的波形圖：
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\textwidth]{./img/Q2-tb1.png}
+  \includegraphics[width=\textwidth]{./img/Q2-tb2.png}
+  \caption{Q2 Waveform}
+  \label{fig:Q2-waveform}
+\end{figure}
+
 
 \section{Q3: Greatest common divisor}
 \begin{itemize}
@@ -244,42 +316,142 @@ Yellow: 010, Red: 001）：
 
 \subsection{Implementation}
 
+首先是狀態圖：\\
+% TODO: 狀態圖
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.6\textwidth]{./img/Q3-state.png}
+    \caption{Q3 State diagram}
+    \label{fig:Q3-state}
+\end{figure}
+
+\newpage
+
+接著是計數器與狀態的判定：\\
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./img/Q3-counter.png}
+  \caption{Q3 Counter Circuit}
+  \label{fig:Q3-counter}
+\end{figure}
+
+\newpage
+
+接著是輾轉相除法的實作：
+% TODO: 輾轉相除法的實作
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.7\textwidth]{./img/Q3-ab.png}
+  \caption{Q3 Euclidean Circuit}
+  \label{fig:Q3-euclidean}
+\end{figure}
+\newpage
+最後是 gcd 與 done 的輸出：
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.7\textwidth]{./img/Q3-gcd.png}
+  \caption{Q3 Output}
+  \label{fig:Q3-gcd}
+\end{figure}
+\subsection{Simulation}
+我們使用 random 來產生 a, b 的值，並觀察 gcd 的輸出是否正確。
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./img/Q3-tb.png}
+  \caption{Q3 Waveform}
+  \label{fig:Q3-waveform}
+\end{figure}
+
+\newpage
+
 \section{FPGA1: Mixed keyboard and audio modules together}
 
 這題要在 FPGA 上實作一個播放 C4 ~ C8 音階的功能，當按下 w 鍵時，音調會往上播放、按下 s 鍵時，音調會往下播放、\
 按下 r 鍵時，會在 1 秒與 0.5 秒之間互相切換播放速度。
 
 \subsection{Implementation}
-\subsubsection*{Tone Decoder}
+
 首先是 Decoder 的部分，這邊會接收兩個輸入：tone, height，分別代表音調和音高，\
 如 C4 就會被分成 C, 4，並輸出相對應的音調頻率。
 \par
 以 C 這個音為例，C4 的時候頻率就是 262 Hz，C5 的時候就是 $262 \times 2^1$，C6 則是 $262 \times 2^2$，以此類推，\
 因此我直接使用 left shift 音高減掉四位元，就能夠得到相對應的頻率。
 
-% TODO: 放 Decoder 的電路圖
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.7\textwidth]{./img/FPGA1-decoder.png}
+  \caption{FPGA1 Decoder}
+  \label{fig:FPGA1-decoder}
+\end{figure}
+\newpage
 
 接著是音階控制的部分，首先是速度，fast = 0 時代表每一秒更新，fast = 1 時代表每半秒更新。當按下鍵盤 R 時，
 fast 值就會做一次 not 反轉，下圖是這部分的電路圖：
-% TODO: fast 電路圖
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./img/FPGA1-fast.png}
+  \caption{FPGA1 Fast}
+  \label{fig:FPGA1-fast}
+\end{figure}
+
 接著是 direction，與 fast 的實作方法類似，direction = 0 代表下行，反之則是上行。
 實作的部分是改成按下 S 時將 direction 設為 0，按下 W 時將 direction 設為 1。
-% TODO: direction 電路圖
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./img/FPGA1-direction.png}
+  \caption{FPGA1 Direction}
+  \label{fig:FPGA1-direction}
+\end{figure}
+
+\newpage
+
 接下來是 counter，每一個 clock cycle 就會加一，並且根據 fast 的值，輸出一個訊號代表音調是否要更新。
-% TODO: counter 電路圖
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./img/FPGA1-counter.png}
+  \caption{FPGA1 Counter}
+  \label{fig:FPGA1-counter}
+\end{figure}
 
 有了以上三個 register 後，就可以來實作音調的控制了。首先是 tone 的部分，當音調不在 C4 或 C8 時，\
 每次更新就會根據 direction ，將 tone 在 $0 \sim 6$ 的區間加上一或減去一。如果判定會超出範圍就會保持原樣。
-% TODO: tone 電路圖
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.7\textwidth]{./img/FPGA1-tone.png}
+  \caption{FPGA1 Tone}
+  \label{fig:FPGA1-tone}
+\end{figure}
+
+\newpage
+
 接著是 height，每次更新時會檢測 tone 是否有 overflow 或是 underflow，並根據情況加減一。\
 如果判定會超出範圍也會保持原諒。
-% TODO: height 電路圖
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./img/FPGA1-height.png}
+  \caption{FPGA1 Height}
+  \label{fig:FPGA1-height}
+\end{figure}
+
 
 最後，只要將 tone, height 輸入到 Decoder 中，得到對應的頻率後輸入至音訊控制模組，就完成了這題的音階控制。\
 下圖展現的是相關參數的連接方式：
-% TODO: 音訊控制模組
 
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./img/FPGA1-all.png}
+  \caption{FPGA1 Connect}
+  \label{fig:FPGA1-connect}
+\end{figure}
 
+\newpage
 \section{FPGA2: vending maching}
 這題要在 FPGA 上實作一個自動販賣機，有三種商品：
 \begin{itemize}
@@ -299,22 +471,61 @@ fast 值就會做一次 not 反轉，下圖是這部分的電路圖：
 並且將板子上的 Top Button 作為 reset 訊號、將 Bottom  Button 作為取消訊號。
 
 \subsection{Implementation}
-首先將輸入的按鈕訊號進行 debounce 與 onepulse 處理：
-% TODO: debounce, onepulse 電路圖
-接著透過判斷鍵盤輸入的 A, S, D, F，來決定 buy 的訊號：
-% TODO: buy 電路圖
-接著將以上參數輸入至 VendingMachine Module 中，並定義這些變數：
-\begin{itemize}
-  \item enable[3:0]: 代表每個商品是否可以購買，透過判斷是否有足夠的錢，以及目前不在 cancel 狀態中來判定。
-  \item buying: 透過將四個 buy 訊號做 or 運算，來判定是否正在購買。
-\end{itemize}
-% TODO: 放 enable, buying 電路圖
-接著利用這些變數，實作自動販賣機的 state machine：
-% TODO: 放 state machine 電路圖
-最後，將 VendingMachine 的輸出接到 NumberDevide 中，計算出三個數字分別要顯示什麼：
-% TODO: 放 NumberDevide 電路圖
+
+
+enable[3:0]: 代表每個商品是否可以購買，透過判斷是否有足夠的錢，以及目前不在 cancel 狀態中來判定：
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./img/FPGA2-enable.png}
+  \caption{FPGA2 Enable signal}
+  \label{fig:FPGA2-enable}
+\end{figure}
+
+\newpage
+
+buying: 透過將四個 buy 訊號做 or 運算，來判定是否正在購買：
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.5\textwidth]{./img/FPGA2-buying.png}
+  \caption{FPGA2 Buying signal}
+  \label{fig:FPGA2-buy}
+\end{figure}
+
+有關取消訊號的部分：
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./img/FPGA2-counter.png}
+  \caption{FPGA2 Cancel signal}
+  \label{fig:FPGA2-cancel}
+\end{figure}
+
+\newpage
+
+將以上訊號接到 state machine 中：
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\textwidth]{./img/FPGA2-machine.png}
+  \caption{FPGA2 State machine}
+  \label{fig:FPGA2-state} 
+\end{figure}
+
+\newpage
+
+接著，將 VendingMachine 的輸出接到 NumberDevide 中，計算出三個數字分別要顯示什麼：
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\textwidth]{./img/FPGA2-digit.png}
+  \caption{FPGA2 Digit Devider}
+  \label{fig:FPGA2-digit}
+\end{figure}
+
 最後再將這些訊號接到七段顯示器的輸出控制模組中，就完成了這題的實作。
-% TODO: 放七段顯示器的輸出控制模組
+
+\newpage
 
 \section{Other}
 

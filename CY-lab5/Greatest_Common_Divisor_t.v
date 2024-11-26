@@ -1,5 +1,5 @@
 `timescale 1ps/1ps
-// `include "GCD.v"
+`include "gcd-elfnt.v"
 
 
 module gcd_t();
@@ -24,8 +24,8 @@ initial begin
 end
 
 initial begin
-    // $dumpfile("gcd_t.vcd");
-    // $dumpvars(0, gcd_t);
+    $dumpfile("gcd_t.vcd");
+    $dumpvars(0, gcd_t);
     rst_n = 1;
     start = 0;
     inputa = 0;
