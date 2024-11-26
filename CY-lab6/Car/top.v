@@ -59,7 +59,7 @@ module Top(
             left = 2'b00;
             right = 2'b00;
         end
-        else if (state != 0) begin
+        else if (state != 0 && state != 3'b010) begin
             if (state[0])
                 left = 2'b10;
             else if (!state[1])
