@@ -5,7 +5,6 @@ module motor(
     output [1:0]pwm
 );
 
-    reg [9:0]next_left_motor, next_right_motor;
     reg [9:0]left_motor, right_motor;
     wire left_pwm, right_pwm;
 
@@ -13,54 +12,9 @@ module motor(
     motor_pwm m1(clk, rst, right_motor, right_pwm);
     
     always@(posedge clk)begin
-        if(rst)begin
-            left_motor <= 10'd0;
-            right_motor <= 10'd0;
-        end else begin
-            left_motor <= next_left_motor;
-            right_motor <= next_right_motor;
-            // left_motor <= 10'd1000;
-            // right_motor <= 10'd1000;
-        end
+        left_motor <= 10'd1023;
+        right_motor <= 10'd1023;
     end
-    
-    // [TO-DO] take the right speed for different situation
-
-    always@(*) begin
-        // if (mode == 3'b000) begin
-        //     next_left_motor = 10'd0;
-        //     next_right_motor = 10'd0;
-        // end
-        // else if (mode == 3'b001) begin
-        //     next_left_motor = 10'd1000;
-        //     next_right_motor = 10'd1000;
-        // end
-        // else if (mode == 3'b011) begin
-        //     next_left_motor = 10'd0;
-        //     next_right_motor = 10'd1000;
-        // end
-        // else if (mode == 3'b100) begin
-        //     next_left_motor = 10'd1000;
-        //     next_right_motor = 10'd1000;
-        // end
-        // else if (mode == 3'b110) begin
-        //     next_left_motor = 10'd1000;
-        //     next_right_motor = 10'd10;
-        // end
-        // else if (mode == 3'b111) begin
-        //     next_left_motor = 10'd1000;
-        //     next_right_motor = 10'd1000;
-        // end
-        if (mode != 0) begin
-            next_left_motor = 10'd1000;
-            next_right_motor = 10'd1000;
-        end
-        else begin
-            next_left_motor = left_motor;
-            next_right_motor = right_motor;
-        end
-    end
-
 
     assign pwm = {left_pwm, right_pwm};
 endmodule

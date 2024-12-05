@@ -1,5 +1,5 @@
-module sonic_top(clk, rst, Echo, Trig, stop);
-	input clk, rst, Echo;
+module sonic_top(clk, rst, enable_stop, Echo, Trig, stop);
+	input clk, rst, enable_stop, Echo;
 	output Trig, stop;
 
 	wire[19:0] dis;
@@ -11,10 +11,7 @@ module sonic_top(clk, rst, Echo, Trig, stop);
 	TrigSignal u1(.clk(clk), .rst(rst), .trig(Trig));
 	PosCounter u2(.clk(clk1M), .rst(rst), .echo(Echo), .distance_count(dis));
 
-    // [TO-DO] calculate the right distance to trig stop(triggered when the distance is lower than 40 cm)
-    // Hint: using "dis"
-    assign stop = (dis < 20'd4000) ? 1'b1 : 1'b0;
-    // assign stop = 0;
+    assign stop = (dis < 20'd4000) ? 1'b1 & enable_stop : 1'b0;
  
 endmodule
 
